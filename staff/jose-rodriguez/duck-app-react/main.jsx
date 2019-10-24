@@ -67,7 +67,6 @@ class App extends Component {
                     this.setState({ error: error.message })
 
                 } else {
-                    debugger
                     if (!(query)) {
                         ducks = ducks.shuffle().splice(0, 3)
                         this.setState({ ducks })
@@ -86,29 +85,28 @@ class App extends Component {
         this.setState({ view: 'search' })
     }
 
-    handleDetail() {
-        this.setState({ view: 'detail' })
+    handleDetail(id) {
+        retrieveDuck(id, (error, duck) => {
+            if (error) {
+                this.setState({error: error.message})
+                
+            } else {
+                this.setState({ view: 'detail', duck })
+            }
+        })
     }
 
     render() {
 
-        const { state: { view, ducks, error }, handleGoToRegister, handleBackFromRegister, handleGoToLogin, handleBackFromLogin, handleRegister, handleLogin, handleSearch, handleDetail, handleBackToSearch } = this
+        const { state: { view, ducks, duck, error }, handleGoToRegister, handleBackFromRegister, handleGoToLogin, handleBackFromLogin, handleRegister, handleLogin, handleSearch, handleDetail, handleBackToSearch } = this
         return <>
             {view === 'landing' && <Landing onLogin={handleGoToLogin} onRegister={handleGoToRegister} />}
             {view === 'register' && <Register onRegister={handleRegister} onBack={handleBackFromRegister} error={error} />}
             {view === 'login' && <Login onLogin={handleLogin} onBack={handleBackFromLogin} error={error} />}
-            {view === 'search' && <Search onSearch={handleSearch} results = {ducks}/>}
-            {view === 'search' &&
-                <section className="view ducks">
-                    <ul className="results" key={Math.random()} >
-                        {ducks.map(duck => <Results onResult={duck} />)}
-                    </ul>
-                </section>}
-            {view === 'detail' && <Detail onDetail={handleDetail} onBack={handleBackToSearch} onStore={handleGoToStore} error={error} />}
+            {view === 'search' && <Search onSearch={handleSearch} results = {ducks} error={error} onResultsRender = {results => <Results items={results} onItemRender={item => <ResultItem item={item} key={item.id} onClick={handleDetail} />} />} />}
+            {view === 'detail' && <Detail item={duck} onBack = {handleBackToSearch}/>}
         </>
 
     }
 }
-
-
 ReactDOM.render(<App />, document.getElementById('root'))
