@@ -1,16 +1,29 @@
-function retrieveDuck(id, callback) {
-    if (typeof id !== 'string') throw new TypeError(id + ' is not a string');
-    if (typeof callback !== 'function') throw new TypeError(callback + ' is not a function');
+function retrieveDuck(id, token, duckId, callback) {
+    if (typeof id !== 'string') throw new TypeError(id + ' is not a string')
+    if (!id.trim().length) throw new ContentError('id is empty or blank')
+    if (typeof token !== 'string') throw new TypeError(token + ' is not a string')
+    if (!token.trim().length) throw new ContentError('token is empty or blank')
+    if (typeof duckId !== 'string') throw new TypeError(duckId + ' is not a string')
+    if (!duckId.trim().length) throw new ContentError('duck id is empty or blank')
+    if (typeof callback !== 'function') throw new TypeError(callback + ' is not a function')
 
-    call('GET', undefined, 'https://duckling-api.herokuapp.com/api/ducks/' + id, undefined, function (result) {
+    call('GET', undefined, `https://duckling-api.herokuapp.com/api/ducks/${duckId}`, undefined, result => {
         if (result.error)
             callback(new Error(result.error))
         else {
-            result.image = result.imageUrl
+            call('GET', token, `https://skylabcoders.herokuapp.com/api/user/${id}`, undefined, result2 => {
+                if (result2.error) return callback(new Error(result2.error))
 
-            delete result.imageUrl
+                const { data: { favs = [] } } = result2
 
-            callback(undefined, result)
+                result.image = result.imageUrl
+
+                delete result.imageUrl
+
+                result.isFav = favs.includes(result.id)
+
+                callback(undefined, result)
+            })
         }
-    });
+    })
 }
