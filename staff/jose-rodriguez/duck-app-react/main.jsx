@@ -1,9 +1,12 @@
 const { Component } = React
 
+const { id, token } = sessionStorage
+
+
 class App extends Component {
     constructor() {
         super()
-        this.state = { view: 'landing', error: undefined, ducks: [] }
+        this.state = { view: id && token ? 'search' : 'landing', error: undefined, ducks: [], query: "" }
 
         this.handleGoToRegister = this.handleGoToRegister.bind(this)
         this.handleGoToLogin = this.handleGoToLogin.bind(this)
@@ -14,6 +17,26 @@ class App extends Component {
         this.handleBackFromLogin = this.handleBackFromLogin.bind(this)
         this.handleDetail = this.handleDetail.bind(this)
         this.handleBackToSearch = this.handleBackToSearch.bind(this)
+        this.handleFav = this.handleFav.bind(this)
+    }
+
+    componentWillMount() {
+        const { id, token } = sessionStorage
+
+        if (id && token)
+            try {
+                retrieveUser(id, token, (error, user) => {
+
+                    const { name } = user
+                    if (error) this.setState({ error: error.message })
+                    else this.setState({ user: name })
+                })
+            } catch (error) {
+                this.setState({ error: error.message })
+            }
+
+        const { state: { query } } = this
+
     }
 
     handleGoToRegister() {
@@ -44,36 +67,39 @@ class App extends Component {
 
     }
 
-    handleLogin(email, password) {
-        try {
-            authenticateUser(email, password, error => {
-                if (error) this.setState({ error: error.message })
-                else {
-                    this.setState({ view: 'search' })
-                    this.handleSearch("")
-                }
 
+    handleLogin = (email, password) => {
+        try {
+            authenticateUser(email, password, (error, data) => {
+                if (error) this.setState({ error: error.message })
+                else
+                    try {
+                        const { id, token } = data
+                        sessionStorage.id = id
+                        sessionStorage.token = token
+
+
+                        retrieveUser(id, token, (error, user) => {
+                            const { name } = user
+                            if (error) this.setState({ error: error.message })
+                            else this.setState({ view: 'search', user: name })
+                        })
+                    } catch (error) {
+                        this.setState({ error: error.message })
+                    }
             })
         } catch (error) {
             this.setState({ error: error.message })
         }
-
     }
 
     handleSearch(query) {
         try {
-            searchDucks(query, (error, ducks) => {
-                if (error) {
-                    this.setState({ error: error.message })
+            searchDucks(query, id, token, (error, ducks) => {
+                if (error) this.setState({ error: error.message })
 
-                } else {
-                    if (!(query)) {
-                        ducks = ducks.shuffle().splice(0, 3)
-                        this.setState({ ducks })
-                    } else {
-                        this.setState({ ducks })
-                    }
-                }
+                else this.setState({ ducks, query })
+
             })
 
         } catch (error) {
@@ -88,23 +114,42 @@ class App extends Component {
     handleDetail(id) {
         retrieveDuck(id, (error, duck) => {
             if (error) {
-                this.setState({error: error.message})
-                
+                this.setState({ error: error.message })
+
             } else {
                 this.setState({ view: 'detail', duck })
             }
         })
     }
 
+    handleFav(duckId) {
+        const { query } = this.state
+        debugger
+        toggleFavDuck(id, token, duckId, (error, data) => {
+            if (error) this.setState({ error: error.message })
+            else
+                searchDucks(query, id, token, (error, ducks) => {
+                    if (error) this.setState({ error: error.message })
+
+                    else this.setState({ ducks })
+                
+                })
+
+
+
+        })
+
+    }
+
     render() {
 
-        const { state: { view, ducks, duck, error }, handleGoToRegister, handleBackFromRegister, handleGoToLogin, handleBackFromLogin, handleRegister, handleLogin, handleSearch, handleDetail, handleBackToSearch } = this
+        const { state: { view, ducks, duck, user, error }, handleGoToRegister, handleBackFromRegister, handleGoToLogin, handleBackFromLogin, handleRegister, handleLogin, handleSearch, handleDetail, handleBackToSearch, handleFav } = this
         return <>
             {view === 'landing' && <Landing onLogin={handleGoToLogin} onRegister={handleGoToRegister} />}
             {view === 'register' && <Register onRegister={handleRegister} onBack={handleBackFromRegister} error={error} />}
             {view === 'login' && <Login onLogin={handleLogin} onBack={handleBackFromLogin} error={error} />}
-            {view === 'search' && <Search onSearch={handleSearch} results = {ducks} error={error} onResultsRender = {results => <Results items={results} onItemRender={item => <ResultItem item={item} key={item.id} onClick={handleDetail} />} />} />}
-            {view === 'detail' && <Detail item={duck} onBack = {handleBackToSearch}/>}
+            {view === 'search' && <Search onSearch={handleSearch} results={ducks} error={error} onResultsRender={results => <Results items={results} onItemRender={item => <ResultItem item={item} key={item.id} onClick={handleDetail} onFav={handleFav} />} />} user={user} />}
+            {view === 'detail' && <Detail item={duck} onBack={handleBackToSearch} onFav={handleFav} />}
         </>
 
     }
