@@ -1,7 +1,7 @@
 const { Component } = React
 
-const { id, token } = sessionStorage
 
+const {id, token} = sessionStorage
 
 class App extends Component {
     constructor() {
@@ -94,6 +94,7 @@ class App extends Component {
     }
 
     handleSearch(query) {
+
         try {
             searchDucks(query, id, token, (error, ducks) => {
                 if (error) this.setState({ error: error.message })
@@ -124,15 +125,14 @@ class App extends Component {
 
     handleFav(duckId) {
         const { query } = this.state
-        debugger
         toggleFavDuck(id, token, duckId, (error, data) => {
-            if (error) this.setState({ error: error.message })
-            else
-                searchDucks(query, id, token, (error, ducks) => {
+            if (error) return this.setState({ error: error.message })
+                const {state: {query}}  = this
+            
+            searchDucks(query, id, token, (error, ducks) => {
                     if (error) this.setState({ error: error.message })
-
                     else this.setState({ ducks })
-                
+
                 })
 
 

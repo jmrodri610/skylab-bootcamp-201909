@@ -1,4 +1,5 @@
 function Search({ onSearch, results, user,onResultsRender }) {
+    
     return <section className="view search _hide">
         <form onSubmit={function (event) {
             event.preventDefault()

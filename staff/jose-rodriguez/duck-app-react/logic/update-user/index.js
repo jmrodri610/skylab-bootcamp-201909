@@ -8,7 +8,6 @@ function toggleFavDuck(userId, token, duckId, callback) {
     retrieveUser(userId, token, (error ,user) => {
         
         const {favs} = user
-        
         favs.includes(duckId) ?  favs.splice(favs.indexOf(duckId), 1) : favs.push(duckId)
         const body = { favs }
         call('PUT', token, `https://skylabcoders.herokuapp.com/api/user/${id}`, body, result => {
