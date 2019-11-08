@@ -1,14 +1,11 @@
 const express = require('express')
-const View = require('./components/view')
-const Landing = require('./components/landing')
-const Register = require('./components/register')
-const Login = require('./components/login')
-const Search = require('./components/search')
+const {View,Landing,Register,Login,Search} = require('./components')
+const {registerUser, authenticateUser, searchDucks, retrieveUser}= require('./logic')
 const querystring = require('querystring')
-const registerUser = require('./logic/register-user')
-const authenticateUser = require('./logic/authenticate-user')
-const searchDucks = require('./logic/search-ducks')
-const retrieveUser =  require('./logic/retrieve-user')
+// const registerUser = require('./logic/register-user')
+// const authenticateUser = require('./logic/authenticate-user')
+// const searchDucks = require('./logic/search-ducks')
+// const retrieveUser =  require('./logic/retrieve-user')
 
 const { argv: [, , port = 8080] } = process
 
