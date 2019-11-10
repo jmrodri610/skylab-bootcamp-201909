@@ -1,11 +1,9 @@
 const express = require('express')
-const {View,Landing,Register,Login,Search} = require('./components')
-const {registerUser, authenticateUser, searchDucks, retrieveUser}= require('./logic')
-const querystring = require('querystring')
-// const registerUser = require('./logic/register-user')
-// const authenticateUser = require('./logic/authenticate-user')
-// const searchDucks = require('./logic/search-ducks')
-// const retrieveUser =  require('./logic/retrieve-user')
+const { View, Landing, Register, Login, Search } = require('./components')
+const { registerUser, authenticateUser, searchDucks, retrieveUser } = require('./logic')
+const { bodyParser, cookieParser } = require('./utils/middlewares')
+
+const sessions = {}
 
 const { argv: [, , port = 8080] } = process
 
@@ -22,68 +20,108 @@ app.get('/register', (req, res) => {
     res.send(View({ body: Register() }))
 })
 
-app.post('/register', (req, res) => {
-    let content = ''
-    req.on('data', chunk => content += chunk)
-    req.on('end', () => {
-        const { name, surname, email, password } = querystring.parse(content)
 
-        try {
-            registerUser(name, surname, email, password, error => {
-                if (error) res.send('bad request')
-                else res.redirect('/login')
-                // else res.send('ok')
-            })
-        } catch (error) {
-            //something
-        }
-    })
+
+app.post('/register', bodyParser, (req, res) => {
+    const { body: { name, surname, email, password } } = req
+
+    try {
+        registerUser(name, surname, email, password)
+            .then(res.redirect('/login'))
+            .catch(() => { res.send('TODO MAL EN REGISTEEEEEER PROMISEEEEE') })
+
+    } catch (error) {
+        res.send('TODO MAAAAAAAL')
+    }
+
 })
 
 app.get('/login', (req, res) => {
     res.send(View({ body: Login() }))
 })
 
-app.post('/login', (req,res) => {
-    let content = ''
-    req.on('data', chunk => content += chunk)
-    req.on('end', () => {
-        const {email, password} = querystring.parse(content)
-        try {
-            authenticateUser(email,password, (error, data) => {
-                const {id,token} = data
+app.post('/login', bodyParser, (req, res) => {
+    const { body: { email, password } } = req
+    try {
+        debugger
+        authenticateUser(email, password)
+            .then(credentials => {
 
-                retrieveUser(id,token, (error, data)=>{
-                    if(error) return res.send(error)
-                    res.send(data)
-                })
-                
+                const { id, token } = credentials
 
-                if (error) res.send('user or password incorrect')
-                else res.redirect('/search')
-                // else res.send(`login ok. id: ${id} and token: ${token}`)
+                sessions[id] = token
+
+                res.setHeader('set-cookie', `id=${id}`)
+
+                res.redirect('./search')
             })
-
-        } catch (error) {
-            //something
-        }
-    })
+            .catch(() => { res.send('ESTA TODO MAAAAAAAAL EN AUNTHENTICATE USEEEEEEER') })
+    } catch (error) {
+        res.send('ESTA TODO MAAAAAAL EN EL LOGIIIIIIN!!')
+    }
 })
 
-app.get('/search', (req, res) => {
-    const {query: {q}}=req
+app.get('/search', cookieParser, (req, res) => {
+    debugger
+    try {
+        const { cookies: { id } } = req
 
-    if (!q) res.send(View({ body: Search({path: '/search'}) }))
-    else {
-        try {
-            searchDucks(q, (error,ducks) => {
-                if (error) return res.send('error')
-                res.send(View({ body: Search({path:'/search',query}) }))
+        if (!id) return res.redirect('/')
+
+        const token = sessions[id]
+
+        if (!token) res.redirect('/')
+
+        retrieveUser(id, token)
+            .then(user => {
+
+                const { name } = user
+
+                const { query: { query: query } } = req
+
+                if (!query) res.send(View({ body: Search({ path: '/search', name, logout: '/logout' }) }))
+
+                else {
+                    try {
+                        searchDucks(id, token, query)
+                            .then(ducks => {
+                                res.send(View({ body: Search({ path: '/search', query, name, logout: '/logout', results: ducks, favPath: '/fav' }) }))
+                            })
+                            .catch(() => { res.send('TODO MAAAAAAL EN SEARCH DUUUUUCKS PROMISEEEEE') })
+                    } catch (error) {
+                        res.send('TODO MAAAAAAL EN SEARCH DUUUUUCKS')
+                    }
+                }
+
             })
-        }catch(error) {
-
-        }
+            .catch(() => { res.send('TODO MAAAAAAL EN EL PROMISE DE RETRIEVE USEEER') })
+    } catch (error) {
+        res.send('TODO MAAAAAAL EN RETRIVE USEEEEEEEEER 2')
     }
+})
+
+app.post('/logout', cookieParser, (req, res) => {
+    res.setHeader('set-cookie', 'id=""; expires=Thu, 01 Jan 1970 00:00:00 GMT')
+
+    const { cookies: { id } } = req
+
+    if (!id) return res.redirect('/')
+
+    delete sessions[id]
+
+    res.redirect('/')
+})
+
+app.post('fav', cookieParser, bodyParser, (req, res) => {
+    res.setHeader('set-cookie', 'id=""; expires=Thu, 01 Jan 1970 00:00:00 GMT')
+
+    const { ccokies: { id } } = req
+
+    if (!id) return res.redirect('/')
+
+    delete sessions[id]
+
+    res.redirect('/')
 })
 
 app.listen(port, () => console.log(`server running on port ${port}`))
