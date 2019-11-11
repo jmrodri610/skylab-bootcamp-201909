@@ -1,15 +1,29 @@
 const express = require('express')
 const { View, Landing, Register, Login, Search, Detail } = require('./components')
-const { registerUser, authenticateUser, searchDucks, retrieveUser, toggleFavDuck, retrieveDuck } = require('./logic')
-const { bodyParser, cookieParser } = require('./utils/middlewares')
+const { registerUser, authenticateUser, searchDucks, retrieveUser, toggleFavDuck, retrieveDuck, retrieveFavDucks } = require('./logic')
+const bodyParser = require('body-parser')
+const session = require('express-session')
+const FileStore = require('session-file-store')(session)
 
-const sessions = {}
 
 const { argv: [, , port = 8080] } = process
 
 const app = express()
 
+app.set('view engine', 'pug') /* para utilizar el pug */
+app.set('views', 'components') 
+
 app.use(express.static('public'))
+
+app.use(session({
+    store: new FileStore({
+    }),
+    secret: 'a super secret thing',
+    saveUninitialized: true,
+    resave: true
+}))
+
+const formBodyParser = bodyParser.urlencoded({ extended: false})
 
 app.get('/', (req, res) => {
     res.send(View({ body: Landing({ register: '/register', login: '/login' }) }))
@@ -17,60 +31,56 @@ app.get('/', (req, res) => {
 })
 
 app.get('/register', (req, res) => {
-    res.send(View({ body: Register() }))
+    res.send(View({ body: Register({path: '/register'}) }))
 })
 
 
 
-app.post('/register', bodyParser, (req, res) => {
+app.post('/register', formBodyParser, (req, res) => {
     const { body: { name, surname, email, password } } = req
 
     try {
         registerUser(name, surname, email, password)
             .then(res.redirect('/login'))
-            .catch(() => { res.send('TODO MAL EN REGISTEEEEEER PROMISEEEEE') })
+            .catch(() => { res.send(error.message) })
 
     } catch (error) {
-        res.send('TODO MAAAAAAAL')
+        res.send(error.message)
     }
 
 })
 
 app.get('/login', (req, res) => {
-    res.send(View({ body: Login() }))
+    res.send(View({ body: Login( {path: '/login'}) }))
 })
 
-app.post('/login', bodyParser, (req, res) => {
-    const { body: { email, password } } = req
+app.post('/login', formBodyParser, (req, res) => {
+    const { session, body: { email, password } } = req
     try {
         authenticateUser(email, password)
             .then(credentials => {
 
                 const { id, token } = credentials
 
-                sessions[id] = { token }
+                session.userId = id
+                session.token = token
 
-                res.setHeader('set-cookie', `id=${id}`)
+                session.save( ()=> res.redirect('/search'))
 
-                res.redirect('./search')
             })
-            .catch(() => { res.send('ESTA TODO MAAAAAAAAL EN AUNTHENTICATE USEEEEEEER') })
+            .catch(() => { res.send(error.message) })
     } catch (error) {
-        res.send('ESTA TODO MAAAAAAL EN EL LOGIIIIIIN!!')
+        res.send(error.message)
     }
 })
 
-app.get('/search', cookieParser, (req, res) => {
+app.get('/search', (req, res) => {
     try {
-        const { cookies: { id }, query: { query: query } } = req
-
-        if (!id) return res.redirect('/')
-
-        const session = sessions[id]
+        const { session , query: { query: query } } = req
 
         if (!session) return res.redirect('/')
 
-        const {token} = session
+        const {userId: id, token} = session
 
         if (!token) res.redirect('/')
 
@@ -78,82 +88,94 @@ app.get('/search', cookieParser, (req, res) => {
 
         retrieveUser(id, token)
             .then(user => {
-
                 name = user.name
 
                 if (!query) res.send(View({ body: Search({ path: '/search', name, logout: '/logout' }) }))
 
-                session.query = query
-
+                
                 return searchDucks(id, token, query)
-                    .then(ducks => res.send(View({ body: Search({ path: '/search', query, name, logout: '/logout', results: ducks, favPath: '/fav', detailPath: '/ducks' }) })))
+                    .then(ducks => {
+                        session.query = query
+                        session.view = 'search'
+
+                        session.save( ()=> res.send(View({ body: Search({ path: '/search', query, name, logout: '/logout', results: ducks, favPath: '/fav', detailPath: '/ducks' }) })))})
+                   
             })
-            .catch(() => { res.send('search, peta aqui, TODO MAAAAAAL EN EL PROMISE DE RETRIEVE USEEER') })
+            .catch(() => { res.send(error.message) })
     } catch (error) {
-        res.send('TODO MAAAAAAL EN RETRIVE USEEEEEEEEER 2')
+        res.send(error.message)
     }
 })
 
-app.post('/logout', cookieParser, (req, res) => {
-    res.setHeader('set-cookie', 'id=""; expires=Thu, 01 Jan 1970 00:00:00 GMT')
+app.post('/logout', (req, res) => {
 
-    const { cookies: { id } } = req
+    const { session } = req
 
-    if (!id) return res.redirect('/')
-
-    delete sessions[id]
-
-    res.redirect('/')
+    session.destroy( () => {
+        res.clearCookie('connect.sid', { path: '/'})
+        res.redirect('/')
+    })
 })
 
-app.post('/fav', cookieParser, bodyParser, (req, res) => {
+app.post('/fav', formBodyParser, (req, res) => {
     try {
-        const { cookies: { id }, body: { id: duckId } } = req
-
-        if (!id) return res.redirect('/')
-
-        const session = sessions[id]
+        const { session, body: { id: duckId } } = req
 
         if (!session) return res.redirect('/')
 
-        const { token, query } = session
+        const { userId: id, token, query } = session
 
         if (!token) return res.redirect('/')
 
         toggleFavDuck(id, token, duckId)
             .then(() => res.redirect(`/search?query=${query}`))
-            .catch(() => { res.send('TODO MAAAAAAL EN TOOGLE FAV PROMISEEEE!!!') })
+            .catch(() => { res.send(error.message) })
 
     } catch (error) {
         res.send(error.message)
     }
 })
 
-app.get('/ducks/:id', cookieParser, (req, res) => {
+app.get('/ducks/:id', (req, res) => {
     try {
-        debugger
-        const {cookies: {id}, params: { id: duckId }} = req
-    
-        if (!id) return res.redirect('/')
-    
-        const session = sessions[id]
+        const {session, params: { id: duckId }} = req
     
         if (!session) return res.redirect('/')
-    
-        const { token, query } = session
+
+        const { userId: id, token, view, query } = session
     
         if (!token) return res.redirect('/')
     
-        const prevPath = `/search?query=${query}`
         retrieveDuck(id, token, duckId)
-            .then(item => {
-                res.send(View({ body: Detail({ path: '/ducks', item , logout: '/logout', favPath: '/fav', prevPath }) }))
+            .then(duck => {
+                res.send(View({ body: Detail({ item: duck, favPath: '/fav', backPath: view === 'search' ? `/search?query=${query}` : '/' }) }))
             })
-            .catch(error => res.send(error.message+'detail, peta aqui, MAAAAAL PROMISE RETRIEVE DUUCK'))
+            .catch(error => res.send(error.message))
         
     } catch (error) {
         res.send(error.message)
     }
 }) 
+
+app.get('/favlist', (req,res) => {
+    try {
+        const {session} = req
+
+        if(!session) return res.redirect('/')
+
+        const {userId: id, token} = session
+
+        if(!token) res.redirect('/')
+
+        retrieveFavDucks(id,token)
+            .then
+
+
+        
+    } catch (error) {
+        res.send(error.message + ' sync favList')
+        
+    }
+})
 
 app.listen(port, () => console.log(`server running on port ${port}`))

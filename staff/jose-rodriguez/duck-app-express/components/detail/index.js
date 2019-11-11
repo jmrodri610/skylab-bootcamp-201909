@@ -1,4 +1,4 @@
-module.exports = function ({ item: { id, title, image, description, price, link, isFav }, favPath, prevPath }) {
+module.exports = function ({ item: { id, title, image, description, price, link, isFav }, favPath, backPath }) {
     return `<section class="view detail _hide">
         <h2 class="detail__title">${title}</h2>
         <img class="detail__image" src=${image} />
@@ -11,6 +11,6 @@ module.exports = function ({ item: { id, title, image, description, price, link,
             <button type="submit">${isFav ? '🧡' : '💔'}</button>
             </form>
         </span>
-        <a class="detail__back" href=${prevPath}>Go back</a>
+        <a class="detail__back" href=${backPath}>Go back</a>
     </section>`
 }
