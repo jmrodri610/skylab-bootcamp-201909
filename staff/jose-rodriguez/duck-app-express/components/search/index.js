@@ -1,4 +1,7 @@
-module.exports = function({path, query, name, logout}) {
+const Results = require('../results')
+const ResultItem = require('../result-item')
+
+module.exports = function({path, query, name, logout, results, favPath, detailPath}) {
     return  `<section class="view search">
     <h1 class="search__title">Search</h1>
     <h2 class="search__user">${name}</h2>
@@ -10,6 +13,8 @@ module.exports = function({path, query, name, logout}) {
         <input class="search__criteria" type="text" name="query" placeholder="criteria" ${query ? `value=${query}`:''} />
         <button class="search__submit">🔍</button>
     </form>
+
+    ${results ? Results({ items: results, onItemRender: duck => ResultItem({ item: duck, favPath, detailPath }) }) : ''}
 
 </section>`
 }

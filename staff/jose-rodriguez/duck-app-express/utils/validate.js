@@ -31,3 +31,5 @@ const validate = {
 validate.string.notVoid = function (name, target) {
     if (!target.trim().length) throw new ContentError(`${name} is empty or blank`)
 }
+
+module.exports = validate

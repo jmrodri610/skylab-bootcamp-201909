@@ -8,15 +8,17 @@
     "watch": "npx nodemon .",
     "test": "npx mocha logic/*/*.spec.js",
     "test-debug": "npx mocha inspect logic/*/*.spec.js",
-    "sass":"sass index.sass public/index.css"
+    "sass": "sass index.sass public/index.css"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "nodemon": "^1.19.4"
-  
+    "express-session": "^1.17.0",
+    "nodemon": "^1.19.4",
+    "pug": "^2.0.4"
   },
   "devDependencies": {
     "chai": "^4.2.0",
