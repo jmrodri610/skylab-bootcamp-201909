@@ -11,5 +11,5 @@ block body
             input.register__field(type="email" name="email" placeholder="e-mail")
             input.register__field(type="password" name="password" placeholder="password")
             button.register__submit 📨
-            if error
-                +feedback(error)
+        if error
+            +feedback(error)

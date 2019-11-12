@@ -23,18 +23,26 @@ body {
 }
 
 .search {
-  background-color: grey;
+
+  border: 0.3rem solid orange;
+  border-radius: 1rem;
+  border-style: dotted;
+
   text-decoration: none;
   padding: 0.5rem;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 .search__title {
-  color: black;
+
+  color: orange;
+
   font-size: 2rem;
   margin: 0.5rem auto 0.5rem auto;
 }
 .search__user {
-  color: red;
+
+  color: gold;
+
   font-size: 1.5rem;
   margin: 0.5rem auto 0.5rem auto;
 }
@@ -52,6 +60,11 @@ body {
 }
 
 .results {
+
+  border: 0.3rem solid orange;
+  border-radius: 1rem;
+  border-style: dotted;
+
   padding: 1rem;
   margin: 0.5rem;
   list-style: none;
@@ -59,23 +72,32 @@ body {
 }
 .results__item {
   display: inline-block;
-  border: 0.3rem solid black;
+
+  border: 0.3rem solid orange;
   border-radius: 1rem;
+  border-style: dotted;
+
+
   margin: 1rem;
 }
 
 .item {
   display: inline-block;
-  background-color: yellow;
-  border: 0.3rem solid white;
+
+  background-color: pink;
+  border: 0.3rem solid fuchsia;
   border-radius: 1rem;
+  border-style: dotted;
+
   text-decoration: none;
   cursor: pointer;
   padding: 0.5rem;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 .item__title {
-  color: white;
+
+  color: fuchsia;
+
 }
 .item__image {
   display: block;
@@ -87,8 +109,11 @@ body {
   display: inline-block;
   border: 0.3rem solid white;
   border-radius: 1rem;
-  color: red;
-  background-color: white;
+
+  border-style: dotted;
+  color: white;
+  background-color: red;
+
   padding: 0.5rem;
   font-size: 2rem;
 }
@@ -100,12 +125,20 @@ body {
 }
 
 .detail {
+
+  background-color: skyblue;
+  border: 0.3rem solid blue;
+  border-radius: 1rem;
+  border-style: dotted;
+
   text-decoration: none;
   padding: 0.5rem;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 .detail__title {
-  color: black;
+
+  color: blue;
+
   font-size: 2rem;
   margin: 0.5rem auto 0.5rem auto;
 }
@@ -116,12 +149,17 @@ body {
   max-width: 80vw;
 }
 .detail__description {
-  color: black;
+
+  color: blue;
 }
 .detail__price {
   display: inline-block;
-  color: red;
-  background-color: white;
+  border: 0.3rem solid white;
+  border-radius: 1rem;
+  border-style: dotted;
+  color: white;
+  background-color: red;
+
   padding: 0.5rem;
   font-size: 2rem;
   margin: 0.5rem;
@@ -134,34 +172,42 @@ body {
 }
 
 .feedback {
-  border: 0.3rem solid black;
+
+  border: 0.3rem solid orange;
   border-radius: 1rem;
+  border-style: dotted;
   padding: 1rem;
   margin: 1rem;
-  background-color: white;
+  background-color: olive;
+
 }
 .feedback__icon {
   font-size: 1.5rem;
 }
 .feedback__message {
   display: inline;
-  color: red;
+
+  color: white;
+
   font-size: 1.5rem;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .register {
-  width: 50vw;
-  margin: 0 auto;
-  background-color: black;
-  border: 0.3rem solid white;
+
+  background-color: yellowgreen;
+  border: 0.3rem solid green;
   border-radius: 1rem;
+  border-style: dotted;
+
   text-decoration: none;
   padding: 0.5rem;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 .register__title {
-  color: white;
+
+  color: green;
+
   font-size: 2rem;
   margin: 0.5rem auto 0.5rem auto;
 }
@@ -176,17 +222,20 @@ body {
 }
 
 .login {
-  width: 50vw;
-  margin: 0 auto;
-  background-color: black;
-  border: 0.3rem solid white;
+
+  background-color: tomato;
+  border: 0.3rem solid firebrick;
   border-radius: 1rem;
+  border-style: dotted;
+
   text-decoration: none;
   padding: 0.5rem;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 .login__title {
-  color: white;
+
+  color: firebrick;
+
   font-size: 2rem;
   margin: 0.5rem auto 0.5rem auto;
 }
@@ -201,19 +250,27 @@ body {
 }
 
 .landing {
-  height: 100vh;
-  background-color: green;
+
+  background-color: deeppink;
+  border: 0.3rem solid darkviolet;
+  border-radius: 1rem;
+  border-style: dotted;
+
   text-decoration: none;
   padding: 0.5rem;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 .landing__title {
-  color: black;
+
+  color: darkviolet;
+
   font-size: 2rem;
   margin: 0.5rem auto 0.5rem auto;
 }
 .landing__options {
-  color: black;
+
+  color: darkviolet;
+
   font-size: 1.2rem;
   margin: 0.5rem auto 0.5rem auto;
 }

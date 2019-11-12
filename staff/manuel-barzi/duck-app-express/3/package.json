@@ -7,9 +7,10 @@
     "start": "node .",
     "watch": "npx nodemon . --ignore sessions",
     "debug": "node inspect .",
-    "test": "npx mocha logic/*/*.spec.js",
-    "test-debug": "npx mocha inspect logic/*/*.spec.js",
-    "sass": "sass index.sass public/index.css"
+    "test": "npx mocha --timeout 5000 logic/*/*.spec.js",
+    "test-debug": "npx mocha --timeout 5000 inspect logic/*/*.spec.js",
+    "sass": "sass index.sass public/index.css",
+    "sass-watch": "sass --watch index.sass public/index.css"
   },
   "keywords": [],
   "author": "",
