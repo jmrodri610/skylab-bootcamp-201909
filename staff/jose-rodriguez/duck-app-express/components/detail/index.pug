@@ -1,0 +1,14 @@
+extends ../view/index
+
+block body
+    section.view.detail
+        h2.detail__title=item.title
+        img.detail__image(src=item.image)
+        p.detail__description=item.description
+        a.detail__store(href=item.link) Go to store
+        span.detail__price=item.price
+        span.detail__fav
+            form(method='post' action=favPath)
+                input(type='hidden' name='id' value='${id}')
+                button(type=submit)= isFav ? '🧡' : '💔'
+        a.detail__back(href=backPath) Go back

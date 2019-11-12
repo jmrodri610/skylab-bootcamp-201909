@@ -1,0 +1,5 @@
+include ../result-item/index
+
+mixin results({ items, onItemRender })
+    ul.results
+        #{items.map(item => onItemRender(item)).join('')}

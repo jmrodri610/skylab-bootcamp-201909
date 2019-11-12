@@ -26,12 +26,14 @@ app.use(session({
 const formBodyParser = bodyParser.urlencoded({ extended: false})
 
 app.get('/', (req, res) => {
-    res.send(View({ body: Landing({ register: '/register', login: '/login' }) }))
+    // res.send(View({ body: Landing({ register: '/register', login: '/login' }) }))
+    res.render('landing', {register: '/register', login: '/login'})
 
 })
 
 app.get('/register', (req, res) => {
-    res.send(View({ body: Register({path: '/register'}) }))
+    // res.send(View({ body: Register({path: '/register'}) }))
+    res.render('register', {path: '/register'})
 })
 
 
@@ -51,7 +53,8 @@ app.post('/register', formBodyParser, (req, res) => {
 })
 
 app.get('/login', (req, res) => {
-    res.send(View({ body: Login( {path: '/login'}) }))
+    // res.send(View({ body: Login( {path: '/login'}) }))
+    res.render('login', {path: '/login'})
 })
 
 app.post('/login', formBodyParser, (req, res) => {
@@ -98,7 +101,8 @@ app.get('/search', (req, res) => {
                         session.query = query
                         session.view = 'search'
 
-                        session.save( ()=> res.send(View({ body: Search({ path: '/search', query, name, logout: '/logout', results: ducks, favPath: '/fav', detailPath: '/ducks', myFavs: '/favlist' }) })))})
+                        // session.save( ()=> res.send(View({ body: Search({ path: '/search', query, name, logout: '/logout', results: ducks, favPath: '/fav', detailPath: '/ducks', myFavs: '/favlist' }) })))})
+                        session.save( ()=> res.render('search', {path: '/search', query, name, logout: '/logout', results: ducks, favPath: '/fav', detailPath: '/ducks', myFavs: '/favlist'}))})
                    
             })
             .catch(() => { res.send('error.message') })
@@ -148,7 +152,8 @@ app.get('/ducks/:id', (req, res) => {
     
         retrieveDuck(id, token, duckId)
             .then(duck => {
-                res.send(View({ body: Detail({ item: duck, favPath: '/fav', backPath: view === 'search' ? `/search?query=${query}` : '/' }) }))
+                // res.send(View({ body: Detail({ item: duck, favPath: '/fav', backPath: view === 'search' ? `/search?query=${query}` : '/' }) }))
+                res.render('detail', { item: duck, favPath: '/fav', backPath: view === 'search' ? `/search?query=${query}` : '/' })
             })
             .catch(error => res.send(error.message))
         
