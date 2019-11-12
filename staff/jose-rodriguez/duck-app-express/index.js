@@ -90,7 +90,7 @@ app.get('/search', (req, res) => {
             .then(user => {
                 name = user.name
 
-                if (!query) res.send(View({ body: Search({ path: '/search', name, logout: '/logout' }) }))
+                if (!query) res.send(View({ body: Search({ path: '/search', name, logout: '/logout', myFavs: '/favlist' }) }))
 
                 
                 return searchDucks(id, token, query)
@@ -98,10 +98,10 @@ app.get('/search', (req, res) => {
                         session.query = query
                         session.view = 'search'
 
-                        session.save( ()=> res.send(View({ body: Search({ path: '/search', query, name, logout: '/logout', results: ducks, favPath: '/fav', detailPath: '/ducks' }) })))})
+                        session.save( ()=> res.send(View({ body: Search({ path: '/search', query, name, logout: '/logout', results: ducks, favPath: '/fav', detailPath: '/ducks', myFavs: '/favlist' }) })))})
                    
             })
-            .catch(() => { res.send(error.message) })
+            .catch(() => { res.send('error.message') })
     } catch (error) {
         res.send(error.message)
     }
@@ -158,6 +158,7 @@ app.get('/ducks/:id', (req, res) => {
 }) 
 
 app.get('/favlist', (req,res) => {
+    debugger
     try {
         const {session} = req
 
@@ -167,8 +168,19 @@ app.get('/favlist', (req,res) => {
 
         if(!token) res.redirect('/')
 
-        retrieveFavDucks(id,token)
-            .then
+        let name
+
+        retrieveUser(id, token)
+            .then(user => {
+                name = user.name
+
+            retrieveFavDucks(id,token) 
+                .then(ducks => {
+                    res.send(View({ body: Search({ results: ducks, favPath: '/fav', name, logout: '/logout', detailPath: '/ducks', myFavs: '/favlist' })}))
+                })
+                .catch( ()=> res.send('error in async favList'))
+            })
+            .catch(()=> res.send('error'))
 
 
         
