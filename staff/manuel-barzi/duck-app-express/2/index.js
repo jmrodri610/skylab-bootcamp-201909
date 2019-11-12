@@ -108,7 +108,7 @@ app.post('/fav', cookieParser, sessionRetriever, bodyParser, (req, res) => {
 
         if (!session) return res.redirect('/')
 
-        const { id, token, query } = session
+        const { id, token } = session
 
         if (!token) return res.redirect('/')
 
