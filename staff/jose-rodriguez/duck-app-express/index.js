@@ -44,7 +44,7 @@ app.post('/register', formBodyParser, (req, res) => {
     try {
         registerUser(name, surname, email, password)
             .then(res.redirect('/login'))
-            .catch(() => { res.send(error.message) })
+            .catch(() => res.send(error.message) )
 
     } catch (error) {
         res.send(error.message)
@@ -71,7 +71,7 @@ app.post('/login', formBodyParser, (req, res) => {
                 session.save( ()=> res.redirect('/search'))
 
             })
-            .catch(() => { res.send(error.message) })
+            .catch(() => res.send(error.message) )
     } catch (error) {
         res.send(error.message)
     }
@@ -93,7 +93,8 @@ app.get('/search', (req, res) => {
             .then(user => {
                 name = user.name
 
-                if (!query) res.send(View({ body: Search({ path: '/search', name, logout: '/logout', myFavs: '/favlist' }) }))
+                // if (!query) res.send(View({ body: Search({ path: '/search', name, logout: '/logout', myFavs: '/favlist' }) }))
+                if (!query) res.render('search', ({ path: '/search', name, logout: '/logout', myFavs: '/favlist' }) )
 
                 
                 return searchDucks(id, token, query)
@@ -105,7 +106,7 @@ app.get('/search', (req, res) => {
                         session.save( ()=> res.render('search', {path: '/search', query, name, logout: '/logout', results: ducks, favPath: '/fav', detailPath: '/ducks', myFavs: '/favlist'}))})
                    
             })
-            .catch(() => { res.send('error.message') })
+            .catch(() =>  res.send('error.message') )
     } catch (error) {
         res.send(error.message)
     }
@@ -123,17 +124,18 @@ app.post('/logout', (req, res) => {
 
 app.post('/fav', formBodyParser, (req, res) => {
     try {
-        const { session, body: { id: duckId } } = req
+        const { session, body: { id: duckId }, headers: {referer} } = req
 
         if (!session) return res.redirect('/')
 
-        const { userId: id, token, query } = session
+        const { userId: id, token } = session
 
         if (!token) return res.redirect('/')
 
         toggleFavDuck(id, token, duckId)
-            .then(() => res.redirect(`/search?query=${query}`))
-            .catch(() => { res.send(error.message) })
+            .then( ()=> res.redirect(referer))
+            // .then(() => res.redirect(`/search?query=${query}`))
+            .catch(() =>  res.send('error toogleFavDuck') )
 
     } catch (error) {
         res.send(error.message)
