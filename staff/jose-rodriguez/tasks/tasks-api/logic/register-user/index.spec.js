@@ -1,8 +1,7 @@
 const { expect } = require('chai')
 const registerUser = require('.')
 const { ContentError } = require('../../utils/errors')
-const fs = require('fs').promises
-const path = require('path')
+const users = require('../../data/users')
 
 describe('logic - register user', () => {
     let name, surname, email, username, password
@@ -20,11 +19,6 @@ describe('logic - register user', () => {
             .then(response => {
                 expect(response).to.be.undefined
 
-                return fs.readFile(path.join(__dirname, '../../data/users.json'))
-            })
-            .then(json => {
-                const users = JSON.parse(json)
-
                 const user = users.find(user => user.username === username)
 
                 expect(user).to.exist
@@ -38,15 +32,10 @@ describe('logic - register user', () => {
     )
 
     describe('when user already exists', () => {
-        beforeEach(done => {
-            const users = require('../../data/users.json')
+        beforeEach(()=> {
             users.push ({ name, surname, email, username, password })
-            fs.writeFile(path.join(__dirname, '../../data/users.json'), JSON.stringify(users), error => error? reject(error) : resolve())
-            done()
+
         })
-
-        
-
 
         it('should fail on already existing user', () =>
             registerUser(name, surname, email, username, password)
