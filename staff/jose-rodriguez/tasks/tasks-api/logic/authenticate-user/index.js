@@ -1,5 +1,5 @@
 const validate = require('../../utils/validate')
-const users = require('../../data/users')
+const users = require('../../data/users')()
 const { CredentialsError } = require('../../utils/errors')
 
 module.exports = function (username, password) {
@@ -15,6 +15,8 @@ module.exports = function (username, password) {
 
         user.lastAccess = new Date()
 
-        resolve(user.id)
+        users.persist()
+            .then(() => resolve(users.id))
+            .catch(reject)
     })
 }

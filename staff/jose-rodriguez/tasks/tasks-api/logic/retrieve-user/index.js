@@ -11,8 +11,12 @@ module.exports = function (id) {
 
         if (!user) return reject(new NotFoundError(`user with id ${id} not found`))
 
-        const { name, surname, email, username } = user
+        user.lastAccess = new Date
 
-        resolve({ id, name, surname, email, username })
+        users.persist().then(()=> {
+            const { name, surname, email, username } = user
+
+            resolve({ id, name, surname, email, username })
+        })
     })
 }
