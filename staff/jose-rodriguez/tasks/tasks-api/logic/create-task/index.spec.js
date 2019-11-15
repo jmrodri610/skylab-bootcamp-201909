@@ -6,7 +6,7 @@ const { random } = Math
 const uuid = require('uuid')
 
 
-describe.only('logic - create task', () => {
+describe('logic - create task', () => {
     before(() => Promise.all([users.load(), tasks.load()]))
 
     let id, name, surname, email, username, password, title, description
