@@ -1,19 +1,32 @@
 const validate = require('../../utils/validate')
-const tasks = require('../../data/tasks')
-const { NotFoundError } = require('../../utils/errors')
+const { NotFoundError, ConflictError } = require('../../utils/errors')
+const database = require('../../utils/database')
+const { ObjectId } = database
 
-module.exports = function (id) {
+module.exports = function (id, taskId) {
     validate.string(id)
     validate.string.notVoid('id', id)
 
-    return new Promise((resolve, reject) => {
-        const index = tasks.indexOf('id')
-        if (indexOf == -1) return reject(new NotFoundError(`task with id ${id} not found`))
-        else {
-            tasks.splice(index, 1)
-        }
+    const client = database()
 
-        tasks.persist().then(() => resolve(`Task with id ${id} removed successfully`).catch(reject))
+    return client.connect()
+        .then(connection => {
+            const db = connection.db()
 
-    })
+            users = db.collection('users')
+            tasks = db.collection('tasks')
+
+            return users.findOne({ _id: ObjectId(id) })
+                .then(user => {
+                    if (!user) throw new NotFoundError('user not found')
+                    return tasks.findOne({ _id: ObjectId(taskId) })
+                        .then(task => {
+                            const userId = task.user.toString()
+                            if (!task) throw new NotFoundError('task not found')
+                            if (userId !== id) throw new ConflictError('this task does not belong the current user')
+
+                            return tasks.remove({ _id: ObjectId(taskId) })
+                        })
+                })
+        })
 }
