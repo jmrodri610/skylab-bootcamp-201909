@@ -1,17 +1,23 @@
+require('dotenv').config()
+const {env: { DB_URL_TEST }} = process
 const { expect } = require('chai')
 const registerUser = require('.')
 const { ContentError } = require('../../utils/errors')
-const users = require('../../data/users')
+const { random } = Math
+const { database, models: { User }} = require('../../data')
 
 describe('logic - register user', () => {
+    before( ()=> database.connect(DB_URL_TEST))
     let name, surname, email, username, password
 
     beforeEach(() => {
-        name = `name-${Math.random()}`
-        surname = `surname-${Math.random()}`
-        email = `email-${Math.random()}@mail.com`
-        username = `username-${Math.random()}`
-        password = `password-${Math.random()}`
+        name = `name-${random()}`
+        surname = `surname-${random()}`
+        email = `email-${random()}@mail.com`
+        username = `username-${random()}`
+        password = `password-${random()}`
+
+        return User.deleteMany()
     })
 
     it('should succeed on correct credentials', () =>
@@ -19,7 +25,10 @@ describe('logic - register user', () => {
             .then(response => {
                 expect(response).to.be.undefined
 
-                const user = users.find(user => user.username === username)
+                return User.findOne({ username })
+
+            })
+            .then(user => {
 
                 expect(user).to.exist
 
@@ -32,10 +41,9 @@ describe('logic - register user', () => {
     )
 
     describe('when user already exists', () => {
-        beforeEach(()=> {
-            users.push ({ name, surname, email, username, password })
-
-        })
+        beforeEach(()=> 
+            User.create({ name, surname, email, username, password })
+        )
 
         it('should fail on already existing user', () =>
             registerUser(name, surname, email, username, password)
@@ -48,7 +56,7 @@ describe('logic - register user', () => {
                     expect(error.message).to.exist
                     expect(typeof error.message).to.equal('string')
                     expect(error.message.length).to.be.greaterThan(0)
-                    expect(error.message).to.equal(`user with username "${username}" already exists`)
+                    expect(error.message).to.equal(`user with username ${username} already exists`)
                 })
         )
     })
@@ -99,4 +107,5 @@ describe('logic - register user', () => {
     })
 
     // TODO other cases
+    after(()=> User.deleteMany().then(database.disconnect))
 })
