@@ -1,13 +1,13 @@
 require('dotenv').config()
 const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
+const database = require('../../utils/database')
 const listTasks = require('.')
 const { random } = Math
-const database = require('../../utils/database')
-const { ObjectId } = database
-// const uuid = require('uuid')
 
-describe.only('logic - list tasks', () => {
+const { ObjectId } = database
+
+describe('logic - list tasks', () => {
     let client, users, tasks
 
     before(() => {
@@ -32,44 +32,41 @@ describe.only('logic - list tasks', () => {
         password = `password-${random()}`
 
         return users.insertOne({ name, surname, email, username, password })
-            .then(result => {
-                id = result.insertedId.toString()
-
-
+            .then(({ insertedId }) => id = insertedId.toString())
+            .then(() => {
                 taskIds = []
                 titles = []
                 descriptions = []
 
+                const insertions = []
+
                 for (let i = 0; i < 10; i++) {
                     const task = {
-                        user: id,
+                        user: ObjectId(id),
                         title: `title-${random()}`,
                         description: `description-${random()}`,
                         status: 'REVIEW',
                         date: new Date
                     }
 
-                    
-                    return tasks.insertOne(task)
-                    .then(result => {   
-                        if (!result.insertedId) throw Error(error.message)
+                    insertions.push(tasks.insertOne(task)
+                        .then(result => taskIds.push(result.insertedId.toString())))
 
-                        taskIds.push(task.id)
-                        titles.push(task.title)
-                        descriptions.push(task.description)
-                        })
+                    titles.push(task.title)
+                    descriptions.push(task.description)
                 }
-                
-            })
 
-        // for (let i = 0; i < 10; i++)
-        //     tasks.insertOne({
-        //         user: uuid(),
-        //         title: `title-${random()}`,
-        //         description: `description-${random()}`,
-        //         status: 'REVIEW',
-        //         date: new Date
-        //     })
+                for (let i = 0; i < 10; i++)
+                    insertions.push(tasks.insertOne({
+                        user: ObjectId(),
+                        title: `title-${random()}`,
+                        description: `description-${random()}`,
+                        status: 'REVIEW',
+                        date: new Date
+                    }))
+
+                return Promise.all(insertions)
+            })
     })
 
     it('should succeed on correct user and task data', () =>
