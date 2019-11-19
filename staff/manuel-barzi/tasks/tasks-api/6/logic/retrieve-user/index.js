@@ -12,8 +12,8 @@ module.exports = function (id) {
     const client = database()
 
     return client.connect()
-        .then(connection => {
-            const users = connection.db().collection('users')
+        .then(db => {
+            const users = db.collection('users')
 
             return users.findOne({ _id: ObjectId(id) })
                 .then(user => {

@@ -16,15 +16,12 @@ describe('logic - remove task', () => {
         client = database(DB_URL_TEST)
 
         return client.connect()
-            .then(connection => {
-                const db = connection.db()
-
+            .then(db => {
                 users = db.collection('users')
                 tasks = db.collection('tasks')
             })
     })
 
-    const statuses = ['TODO', 'DOING', 'REVIEW', 'DONE']
     let id, name, surname, email, username, password, taskIds, titles, descriptions
 
     beforeEach(() => {
@@ -34,7 +31,8 @@ describe('logic - remove task', () => {
         username = `username-${random()}`
         password = `password-${random()}`
 
-        return users.insertOne({ name, surname, email, username, password })
+        return Promise.all([users.deleteMany(), tasks.deleteMany()]) 
+            .then(() => users.insertOne({ name, surname, email, username, password }))
             .then(({ insertedId }) => id = insertedId.toString())
             .then(() => {
                 taskIds = []
@@ -110,7 +108,7 @@ describe('logic - remove task', () => {
     })
 
     it('should fail on correct user and wrong task data', () => {
-        return tasks.findOne({ _id: { $nin: taskIds } })
+        return tasks.findOne({ _id: { $nin: taskIds.map(taskId => ObjectId(taskId)) } })
             .then(({ _id }) => {
                 const taskId = _id.toString()
 
@@ -126,5 +124,5 @@ describe('logic - remove task', () => {
 
     // TODO other test cases
 
-    after(() => client.close())
+    after(() => Promise.all([users.deleteMany(), tasks.deleteMany()]).then(client.close))
 })

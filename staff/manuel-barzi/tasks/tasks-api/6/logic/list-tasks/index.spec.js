@@ -14,9 +14,7 @@ describe('logic - list tasks', () => {
         client = database(DB_URL_TEST)
 
         return client.connect()
-            .then(connection => {
-                const db = connection.db()
-
+            .then(db => {
                 users = db.collection('users')
                 tasks = db.collection('tasks')
             })
@@ -31,7 +29,8 @@ describe('logic - list tasks', () => {
         username = `username-${random()}`
         password = `password-${random()}`
 
-        return users.insertOne({ name, surname, email, username, password })
+        return Promise.all([users.deleteMany(), tasks.deleteMany()])
+            .then(() => users.insertOne({ name, surname, email, username, password }))
             .then(({ insertedId }) => id = insertedId.toString())
             .then(() => {
                 taskIds = []
@@ -104,5 +103,5 @@ describe('logic - list tasks', () => {
 
     // TODO other test cases
 
-    after(() => client.close())
+    after(() => Promise.all([users.deleteMany(), tasks.deleteMany()]).then(client.close))
 })
