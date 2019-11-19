@@ -1,22 +1,27 @@
+require('dotenv').config()
+const { env: {DB_URL_TEST } } = process
 const { expect } = require('chai')
 const retrieveUser = require('.')
 const { random } = Math
-const users = require('../../data/users')
-const uuid = require('uuid/v4')
 const { NotFoundError } = require('../../utils/errors')
+const {database, models: { User }} = require('../../data')
 
 describe('logic - retrieve user', () => {
+    before( ()=> database.connect(DB_URL_TEST))
     let id, name, surname, email, username, password
 
     beforeEach(() => {
-        id = uuid()
         name = `name-${random()}`
         surname = `surname-${random()}`
         email = `email-${random()}@mail.com`
         username = `username-${random()}`
         password = `password-${random()}`
 
-        users.push({ id, name, surname, email, username, password })
+        return User.deleteMany()
+            .then(()=> 
+            User.create({ id, name, surname, email, username, password })
+                .then(user => id = user.id)
+            )
     })
 
     it('should succeed on correct user id', () =>
@@ -33,7 +38,7 @@ describe('logic - retrieve user', () => {
     )
 
     it('should fail on wrong user id', () => {
-        const id = 'wrong'
+        const id = '41224d776a326fb40f000001'
 
         return retrieveUser(id)
             .then(() => {
@@ -42,7 +47,8 @@ describe('logic - retrieve user', () => {
             .catch(error => {
                 expect(error).to.exist
                 expect(error).to.be.an.instanceOf(NotFoundError)
-                expect(error.message).to.equal(`user with id ${id} not found`)
+                expect(error.message).to.equal(`user not found`)
             })
     })
+    after(() => User.deleteMany().then(database.disconnect))
 })

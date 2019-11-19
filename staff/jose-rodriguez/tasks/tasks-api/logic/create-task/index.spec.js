@@ -3,23 +3,13 @@ const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
 const createTask = require('.')
 const { random } = Math
-const database = require('../../utils/database')
-const { ObjectId } = database
+const {database, models: { User, Task}} = require('../../data')
 
-describe('logic - create task', () => {
-    let client, users, tasks
 
-    before(() => {
-        client = database(DB_URL_TEST)
+describe.only('logic - create task', () => {
 
-        return client.connect()
-            .then(connection => {
-                const db = connection.db()
 
-                users = db.collection('users')
-                tasks = db.collection('tasks')
-            })
-    })
+    before(() => database.connect(DB_URL_TEST))
 
     let id, name, surname, email, username, password, title, description
 
@@ -30,10 +20,10 @@ describe('logic - create task', () => {
         username = `username-${random()}`
         password = `password-${random()}`
 
-        return users.insertOne({ name, surname, email, username, password })
-            .then(result => {
-                id = result.insertedId.toString()
-
+        return Promise.all([User.deleteMany(), Task.deleteMany()])
+        .then (() => User.create({ name, surname, email, username, password }) )
+        .then(user => {
+                id = user.id
                 title = `title-${random()}`
                 description = `description-${random()}`
             })
@@ -47,7 +37,7 @@ describe('logic - create task', () => {
                 expect(taskId).to.be.a('string')
                 expect(taskId).to.have.length.greaterThan(0)
 
-                return tasks.findOne({ _id: ObjectId(taskId) })
+                return Task.findById(taskId)
             })
             .then(task => {
                 expect(task).to.exist
@@ -62,5 +52,5 @@ describe('logic - create task', () => {
 
     // TODO other test cases
 
-    after(() => client.close())
+    after(() => Promise.all([User.deleteMany(), Task.deleteMany()]).then(database.disconnect))
 })

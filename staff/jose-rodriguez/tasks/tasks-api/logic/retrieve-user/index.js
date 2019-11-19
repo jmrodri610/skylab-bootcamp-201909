@@ -1,35 +1,29 @@
 const validate = require('../../utils/validate')
-const users = require('../../data/users')
 const { NotFoundError } = require('../../utils/errors')
-const database = require('../../utils/database')
-const { ObjectId } = database
+const { ObjectId, models: { User } } = require('../../data')
+
 
 module.exports = function (id) {
     validate.string(id)
     validate.string.notVoid('id', id)
 
-    const client = database()
 
-    return client.connect()
-        .then(connection => {
-            debugger
-            const users = connection.db().collection('users')
-            
-            return users.findOne({ _id: ObjectId(id) })
-                .then(user => {
-                    if (!user) throw new NotFoundError('user does not exist')
-                    
-                    const { _id } = user
+    return User.findById(id)
+        .then(user => {
+            if (!user) throw new NotFoundError(`user not found`)
 
-                    return users.updateOne({ _id }, { $set: { lastAccess: new Date } })
-                        .then(result => {
-                            if (!result.modifiedCount) throw Error('could not update user')
+            user.lastAccess = new Date
 
-                            const {name, surname, email, username, lastAccess} = user
-    
-                            return {name, surname, email, username, lastAccess}
-                        })
+            return user.save()
+        })
+        .then( user => {
+            user = user.toObject()
 
-                })
+            user.id = user._id.toString()
+            delete user._id
+
+            delete user.password
+
+            return user
         })
 }

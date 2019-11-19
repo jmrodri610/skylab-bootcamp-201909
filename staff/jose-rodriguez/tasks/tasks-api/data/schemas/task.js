@@ -1,6 +1,11 @@
-const { Schema } = require('mongoose')
+const { Schema, ObjectId } = require('mongoose')
 
 module.exports = new Schema({
+    user: {
+        type: ObjectId,
+        required: true
+    },
+
     title: {
         type: String,
         required: true
@@ -13,11 +18,19 @@ module.exports = new Schema({
 
     status: {
         type: String,
-        required: true
+        required: true,
+        default: 'TODO'
     },
 
     date: {
         type: Date,
-        required: true
+        required: true,
+        default: Date.now
+    },
+
+    lastAccess: {
+        type: Date,
+        default: Date.now
     }
+
 })
