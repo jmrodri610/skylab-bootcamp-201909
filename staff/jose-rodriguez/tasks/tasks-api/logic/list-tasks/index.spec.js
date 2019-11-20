@@ -1,7 +1,7 @@
 require('dotenv').config()
 const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
-const database = require('../../utils/database')
+const {database, models: {User, Task}} = require('../../data')
 const listTasks = require('.')
 const { random } = Math
 
@@ -10,17 +10,7 @@ const { ObjectId } = database
 describe('logic - list tasks', () => {
     let client, users, tasks
 
-    before(() => {
-        client = database(DB_URL_TEST)
-
-        return client.connect()
-            .then(connection => {
-                const db = connection.db()
-
-                users = db.collection('users')
-                tasks = db.collection('tasks')
-            })
-    })
+    before(() => database.connect(DB_URL_TEST))
 
     let id, name, surname, email, username, password, taskIds, titles, descriptions
 
@@ -31,8 +21,9 @@ describe('logic - list tasks', () => {
         username = `username-${random()}`
         password = `password-${random()}`
 
-        return users.insertOne({ name, surname, email, username, password })
-            .then(({ insertedId }) => id = insertedId.toString())
+        return Promise.all(User.deleteMany(), Task.deleteMany())
+            .then( () => User.create({ name, surname, email, username, password }))
+            .then( user => id = user.id)
             .then(() => {
                 taskIds = []
                 titles = []
@@ -49,8 +40,7 @@ describe('logic - list tasks', () => {
                         date: new Date
                     }
 
-                    insertions.push(tasks.insertOne(task)
-                        .then(result => taskIds.push(result.insertedId.toString())))
+                    insertions.push(Task.create(task).then(task => taskIds.push(task.id)))
 
                     titles.push(task.title)
                     descriptions.push(task.description)
@@ -101,5 +91,5 @@ describe('logic - list tasks', () => {
 
     // TODO other test cases
 
-    after(() => client.close())
+    after(() => Promise.all(User.deleteMany(),Task.deleteMany()).then(database.disconnect))
 })

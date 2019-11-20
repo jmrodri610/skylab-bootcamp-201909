@@ -1,10 +1,9 @@
 const validate = require('../../utils/validate')
 const { NotFoundError } = require('../../utils/errors')
-const database = require('../../utils/database')
-const { ObjectId } = database
+const {ObjectId, models: {User, Task}} = require('../../data')
+
 
 module.exports = function (id) {
-    debugger
     validate.string(id)
     validate.string.notVoid('id', id)
 
