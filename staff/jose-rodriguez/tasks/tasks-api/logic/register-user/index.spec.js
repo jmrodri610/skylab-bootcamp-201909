@@ -2,12 +2,13 @@ require('dotenv').config()
 const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
 const registerUser = require('.')
-const { ContentError } = require('../../utils/errors')
 const { random } = Math
-const { database, models: { User } } = require('../../data')
+const { errors: { ContentError } } = require('tasks-util')
+const { database, models: { User } } = require('tasks-data')
 
 describe('logic - register user', () => {
     before(() => database.connect(DB_URL_TEST))
+
     let name, surname, email, username, password
 
     beforeEach(() => {
@@ -21,7 +22,6 @@ describe('logic - register user', () => {
     })
 
     it('should succeed on correct credentials', async () => {
-
         const response = await registerUser(name, surname, email, username, password)
 
         expect(response).to.be.undefined
@@ -35,7 +35,6 @@ describe('logic - register user', () => {
         expect(user.email).to.equal(email)
         expect(user.username).to.equal(username)
         expect(user.password).to.equal(password)
-
     })
 
     describe('when user already exists', () => {
@@ -44,10 +43,11 @@ describe('logic - register user', () => {
         it('should fail on already existing user', async () => {
             try {
                 await registerUser(name, surname, email, username, password)
+
                 throw Error('should not reach this point')
             } catch (error) {
+                expect(error).to.exist
 
-                expect(error).to.exist  
                 expect(error.message).to.exist
                 expect(typeof error.message).to.equal('string')
                 expect(error.message.length).to.be.greaterThan(0)
@@ -102,5 +102,6 @@ describe('logic - register user', () => {
     })
 
     // TODO other cases
+
     after(() => User.deleteMany().then(database.disconnect))
 })

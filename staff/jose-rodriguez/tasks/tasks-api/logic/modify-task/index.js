@@ -1,13 +1,15 @@
-const validate = require('../../utils/validate')
-const { NotFoundError, ConflictError } = require('../../utils/errors')
-const database = require('../../utils/database')
-const { ObjectId } = database
+const { validate, errors: { ConflictError, NotFoundError } } = require('tasks-util')
+const { ObjectId, models: { User, Task } } = require('tasks-data')
 
 module.exports = function (id, taskId, title, description, status) {
     validate.string(id)
     validate.string.notVoid('id', id)
+    if (!ObjectId.isValid(id)) throw new ContentError(`${id} is not a valid id`)
+
     validate.string(taskId)
     validate.string.notVoid('task id', taskId)
+    if (!ObjectId.isValid(taskId)) throw new ContentError(`${taskId} is not a valid task id`)
+
     if (title) {
         validate.string(title)
         validate.string.notVoid('title', title)
@@ -22,36 +24,24 @@ module.exports = function (id, taskId, title, description, status) {
         validate.matches('status', status, 'TODO', 'DOING', 'REVIEW', 'DONE')
     }
 
-    const client = database()
+    return (async () => {
+        const user = await User.findById(id)
 
-    return client.connect()
-        .then(connection => {
-            const db = connection.db()
+        if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            users = db.collection('users')
-            tasks = db.collection('tasks')
+        const task = await Task.findById(taskId)
 
-            return users.findOne({ _id: ObjectId(id) })
-                .then(user => {
-                    if (!user) throw new NotFoundError('user not found')
+        if (!task) throw new NotFoundError(`user does not have task with id ${taskId}`)
 
-                    return tasks.findOne({ _id: ObjectId(taskId) })
-                        .then(task => {
-                            const userId = task.user.toString()
-                            if (!task) throw new NotFoundError('task not found')
-                            if (userId !== id) throw new ConflictError('this task does not belong the current user')
+        if (task.user.toString() !== id.toString()) throw new ConflictError(`user with id ${id} does not correspond to task with id ${taskId}`)
 
-                            const { _id } = task
+        const update = {}
 
-                            title && tasks.updateOne({ _id }, { $set: { title: title } })
-                            description && tasks.updateOne({ _id }, { $set: { description: description } })
-                            status && tasks.updateOne({ _id }, { $set: { status: status } })
+        title && (update.title = title)
+        description && (update.description = description)
+        status && (update.status = status)
+        update.lastAccess = new Date
 
-                            tasks.updateOne({ _id }, { $set: { lastAccess: new Date } })
-
-                            return task
-                        })
-                })
-
-        })
+        await Task.updateOne({ _id: ObjectId(taskId) }, { $set: update })
+    })()
 }

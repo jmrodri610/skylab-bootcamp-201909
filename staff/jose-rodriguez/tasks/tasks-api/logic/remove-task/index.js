@@ -1,32 +1,26 @@
-const validate = require('../../utils/validate')
-const { NotFoundError, ConflictError } = require('../../utils/errors')
-const database = require('../../utils/database')
-const { ObjectId } = database
+const { validate, errors: { NotFoundError, ConflictError, ContentError } } = require('tasks-util')
+const { ObjectId, models: { User, Task } } = require('tasks-data')
 
 module.exports = function (id, taskId) {
     validate.string(id)
     validate.string.notVoid('id', id)
+    if (!ObjectId.isValid(id)) throw new ContentError(`${id} is not a valid id`)
 
-    const client = database()
+    validate.string(taskId)
+    validate.string.notVoid('task id', taskId)
+    if (!ObjectId.isValid(taskId)) throw new ContentError(`${taskId} is not a valid task id`)
 
-    return client.connect()
-        .then(connection => {
-            const db = connection.db()
+    return (async () => {
+        const user = await User.findById(id)
 
-            users = db.collection('users')
-            tasks = db.collection('tasks')
+        if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            return users.findOne({ _id: ObjectId(id) })
-                .then(user => {
-                    if (!user) throw new NotFoundError('user not found')
-                    return tasks.findOne({ _id: ObjectId(taskId) })
-                        .then(task => {
-                            const userId = task.user.toString()
-                            if (!task) throw new NotFoundError('task not found')
-                            if (userId !== id) throw new ConflictError('this task does not belong the current user')
+        const task = await Task.findById(taskId)
 
-                            return tasks.remove({ _id: ObjectId(taskId) })
-                        })
-                })
-        })
+        if (!task) throw new NotFoundError(`user does not have task with id ${taskId}`)
+
+        if (task.user.toString() !== id.toString()) throw new ConflictError(`user with id ${id} does not correspond to task with id ${taskId}`)
+
+        await Task.deleteOne({ _id: ObjectId(taskId) })
+    })()
 }

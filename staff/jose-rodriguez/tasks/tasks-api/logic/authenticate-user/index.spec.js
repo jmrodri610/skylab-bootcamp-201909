@@ -2,33 +2,30 @@ require('dotenv').config()
 const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
 const authenticateUser = require('.')
-const { ContentError, CredentialsError } = require('../../utils/errors')
 const { random } = Math
-const { database, models: { User } } = require('../../data')
+const { errors: { ContentError, CredentialsError } } = require('tasks-util')
+const { database, models: { User } } = require('tasks-data')
 
 describe('logic - authenticate user', () => {
     before(() => database.connect(DB_URL_TEST))
 
     let id, name, surname, email, username, password
 
-    beforeEach(() => {
+    beforeEach(async () => {
         name = `name-${random()}`
         surname = `surname-${random()}`
         email = `email-${random()}@mail.com`
         username = `username-${random()}`
         password = `password-${random()}`
 
-        return (async () => {
-            await User.deleteMany()
-            const user = await User.create({ name, surname, email, username, password })
-            id = user.id
-        })()
+        await User.deleteMany()
 
+        const user = await User.create({ name, surname, email, username, password })
+
+        id = user.id
     })
 
-
     it('should succeed on correct credentials', async () => {
-
         const userId = await authenticateUser(username, password)
 
         expect(userId).to.exist
@@ -36,18 +33,33 @@ describe('logic - authenticate user', () => {
         expect(userId.length).to.be.greaterThan(0)
 
         expect(userId).to.equal(id)
-
     })
 
     describe('when wrong credentials', () => {
         it('should fail on wrong username', async () => {
             const username = 'wrong'
+
             try {
                 await authenticateUser(username, password)
+
                 throw new Error('should not reach this point')
-
             } catch (error) {
+                expect(error).to.exist
+                expect(error).to.be.an.instanceOf(CredentialsError)
 
+                const { message } = error
+                expect(message).to.equal(`wrong credentials`)
+            }
+        })
+
+        it('should fail on wrong password', async () => {
+            const password = 'wrong'
+
+            try {
+                await authenticateUser(username, password)
+
+                throw new Error('should not reach this point')
+            } catch (error) {
                 expect(error).to.exist
                 expect(error).to.be.an.instanceOf(CredentialsError)
 
@@ -56,25 +68,6 @@ describe('logic - authenticate user', () => {
             }
         })
     })
-
-    it('should fail on wrong password', async () => {
-        const password = 'wrong'
-
-        try {
-
-            await authenticateUser(username, password)
-            throw new Error('should not reach this point')
-
-        } catch (error) {
-
-            expect(error).to.exist
-            expect(error).to.be.an.instanceOf(CredentialsError)
-
-            const { message } = error
-            expect(message).to.equal(`wrong credentials`)
-        }
-    })
-
 
     it('should fail on incorrect name, surname, email, password, or expression type and content', () => {
         expect(() => authenticateUser(1)).to.throw(TypeError, '1 is not a string')
