@@ -6,7 +6,7 @@ const { random } = Math
 const {database, models: { User, Task}} = require('../../data')
 
 
-describe.only('logic - create task', () => {
+describe('logic - create task', () => {
 
 
     before(() => database.connect(DB_URL_TEST))

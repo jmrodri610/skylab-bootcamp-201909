@@ -1,6 +1,6 @@
 const validate = require('../../utils/validate')
 const { NotFoundError } = require('../../utils/errors')
-const { ObjectId, models: { User } } = require('../../data')
+const { models: { User } } = require('../../data')
 
 
 module.exports = function (id) {
@@ -8,22 +8,21 @@ module.exports = function (id) {
     validate.string.notVoid('id', id)
 
 
-    return User.findById(id)
-        .then(user => {
-            if (!user) throw new NotFoundError(`user not found`)
+    return (async () => {
 
-            user.lastAccess = new Date
+        let user = await User.findById(id)
+        if (!user) throw new NotFoundError(`user not found`)
 
-            return user.save()
-        })
-        .then( user => {
-            user = user.toObject()
+        user.lastAccess = new Date
 
-            user.id = user._id.toString()
-            delete user._id
+        user = await user.save()
 
-            delete user.password
+        user = user.toObject()
+        user.id = user._id.toString()
+        delete user._id
 
-            return user
-        })
+        delete user.password
+
+        return user
+    })()
 }

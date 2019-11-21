@@ -10,15 +10,17 @@ module.exports = function (username, password) {
 
 
 
-    return User.findOne({ username, password })
-        .then(user => {
-            if (!user) throw new CredentialsError('wrong credentials')
+    return (async () => {
+        const user = await User.findOne({ username, password })
 
-            const { _id } = user
+        if (!user) throw new CredentialsError('wrong credentials')
 
-            return User.updateOne({ _id }, { $set: { lastAccess: new Date } })
-                .then( () => {
-                    return _id.toString()
-                })
-        })
+        const { _id } = user
+
+        await User.updateOne({ _id }, { $set: { lastAccess: new Date } })
+
+        return _id.toString()
+
+
+    })()
 }
