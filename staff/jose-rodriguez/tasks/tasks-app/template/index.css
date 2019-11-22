@@ -1,0 +1,204 @@
+* {
+  font-family: "Indie Flower", cursive;
+}
+
+body {
+  margin: 0;
+}
+
+.landing {
+  animation: colorchange 20s infinite;
+  color: whitesmoke;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.landing__title {
+  text-align: center;
+  letter-spacing: 0.1rem;
+  font-size: 3rem;
+  margin: 0.1rem;
+}
+.landing__intro {
+  text-align: center;
+  font-size: 1.5rem;
+}
+.landing__link {
+  font-size: 2rem;
+  border: solid 0.2rem black;
+  color: gray;
+  background-color: lightgoldenrodyellow;
+  border-radius: 15%;
+  padding: 0.3rem;
+}
+.landing__link:hover {
+  filter: brightness(1.5);
+  text-transform: uppercase;
+}
+
+.links {
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.register {
+  height: 100vh;
+  background-color: floralwhite;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.register__title {
+  font-size: 3rem;
+  text-align: center;
+}
+.register__form {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  margin: 0 auto;
+}
+.register__input {
+  font-size: 1.5rem;
+  margin: 0.3rem;
+  border-radius: 15%;
+  border: solid 0.2rem dodgerblue;
+  text-align: center;
+}
+.register__submit {
+  width: 10%;
+  font-size: 3rem;
+  margin: 0 auto;
+  background: none;
+  border: none;
+}
+.register__submit:hover {
+  cursor: pointer;
+}
+
+.login {
+  height: 100vh;
+  background-color: floralwhite;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.login__title {
+  font-size: 3rem;
+  text-align: center;
+}
+.login__form {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  margin: 0 auto;
+}
+.login__input {
+  font-size: 1.5rem;
+  margin: 0.3rem;
+  border-radius: 15%;
+  border: solid 0.2rem dodgerblue;
+  text-align: center;
+}
+.login__submit {
+  width: 10%;
+  font-size: 3rem;
+  margin: 0 auto;
+  background: none;
+  border: none;
+}
+.login__submit:hover {
+  cursor: pointer;
+}
+
+.tasks {
+  background-color: darkolivegreen;
+  border: solid 2rem #974809;
+  margin: 0 auto;
+}
+.tasks__header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.tasks__icons {
+  width: 10%;
+}
+.tasks__icons:hover {
+  filter: brightness(1.4);
+  cursor: pointer;
+}
+.tasks__title {
+  text-align: center;
+  font-size: 2rem;
+}
+.tasks__list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.task {
+  width: 275px;
+  height: 275px;
+  box-sizing: border-box;
+  border: solid;
+  background-color: #f6e021;
+  font-size: 1.3rem;
+  padding: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+.task__header {
+  display: flex;
+  justify-content: space-between;
+}
+.task__title {
+  margin: 0;
+  font-size: 2rem;
+}
+.task__remove {
+  width: 10%;
+}
+.task__remove:hover {
+  cursor: pointer;
+}
+.task__status {
+  font-style: italic;
+  font-size: 1.1rem;
+  color: floralwhite;
+}
+.task__status--todo {
+  background: cornflowerblue;
+}
+.task__status--doing {
+  background: orange;
+}
+.task__status--review {
+  background: red;
+}
+.task__status--done {
+  background: green;
+}
+
+@keyframes colorchange {
+  0% {
+    background: #990000;
+  }
+  25% {
+    background: #d0d001;
+  }
+  50% {
+    background: #2a2ac3;
+  }
+  75% {
+    background: #118a11;
+  }
+  100% {
+    background: #990000;
+  }
+}
+
+/*# sourceMappingURL=index.css.map */
