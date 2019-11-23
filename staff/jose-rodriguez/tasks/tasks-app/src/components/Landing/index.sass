@@ -1,0 +1,44 @@
+.landing
+    animation: colorchange 20s infinite
+    color: whitesmoke
+    height: 100vh
+    display: flex
+    flex-direction: column
+    justify-content: center
+    &__title
+        text-align: center
+        letter-spacing: 0.1rem
+        font-size: 3rem
+        margin: 0.1rem
+    &__intro
+        text-align: center
+        font-size: 1.5rem
+    &__link
+        font-size: 2rem
+        border: solid 0.2rem black
+        color: gray
+        background-color: lightgoldenrodyellow
+        border-radius: 15%
+        padding: .3rem
+        &:hover
+            filter: brightness(1.5)
+            text-transform: uppercase
+   
+
+.links
+    text-align: center
+    width: 100%
+    display: flex
+    justify-content: space-around
+
+@keyframes colorchange
+    0%   
+        background: #990000
+    25%  
+        background: #d0d001
+    50%  
+        background: #2a2ac3
+    75%  
+        background: #118a11
+    100% 
+        background: #990000
