@@ -4,23 +4,33 @@ import Landing from '../Landing'
 import Register from '../Register'
 import Login from '../Login'
 import Board from '../Board'
-import { Route, withRouter } from 'react-router-dom'
-import { authenticateUser, registerUser, retrieveUser } from '../../logic'
+import { Route, withRouter, Redirect } from 'react-router-dom'
+import { authenticateUser, registerUser, retrieveUser, listTasks, modifyTask, createTask } from '../../logic'
+import Hello from '../Hello'
 
 export default withRouter(function ({ history }) {
     const [name, setName] = useState()
+    const [tasks, setTasks] = useState([])
 
     useEffect(() => {
         const { token } = sessionStorage;
-        
+
         (async () => {
             if (token) {
                 const { name } = await retrieveUser(token)
-        
+
                 setName(name)
+
+                await retrieveTasks(token)
             }
         })()
     }, [sessionStorage.token])
+
+    async function retrieveTasks(token) {
+        const tasks = await listTasks(token)
+
+        setTasks(tasks)
+    }
 
     function handleGoToRegister() { history.push('/register') }
 
@@ -42,7 +52,7 @@ export default withRouter(function ({ history }) {
 
             sessionStorage.token = token
 
-            history.push('/tasks')
+            history.push('/board')
         } catch (error) {
             console.error(error)
         }
@@ -56,10 +66,38 @@ export default withRouter(function ({ history }) {
         handleGoBack()
     }
 
+    async function handleChangeTaskStatus(id, status) {
+        try {
+            const { token } = sessionStorage
+
+            await modifyTask(token, id, undefined, undefined, status)
+
+            await retrieveTasks(token)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    async function handleNewTask(title, description) {
+        try {
+            const { token } = sessionStorage
+
+            await createTask(token, title, description)
+
+            await retrieveTasks(token)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const { token } = sessionStorage
+
     return <>
-        <Route exact path='/' render={() => <Landing onRegister={handleGoToRegister} onLogin={handleGoToLogin} />} />
-        <Route path="/register" render={() => <Register onRegister={handleRegister} onBack={handleGoBack} />} />
-        <Route path="/login" render={() => <Login onLogin={handleLogin} onBack={handleGoBack} />} />
-        <Route path="/tasks" render={() => <Board user={name} onLogout={handleLogout}/>} />
+        <Route exact path="/" render={() => token ? <Redirect to="/board" /> : <Landing onRegister={handleGoToRegister} onLogin={handleGoToLogin} />} />
+        <Route path="/register" render={() => token ? <Redirect to="/board" /> : <Register onRegister={handleRegister} onBack={handleGoBack} />} />
+        <Route path="/login" render={() => token ? <Redirect to="/board" /> : <Login onLogin={handleLogin} onBack={handleGoBack} />} />
+        <Route path="/board" render={() => token ? <Board user={name} tasks={tasks} onLogout={handleLogout} onChangeTaskStatus={handleChangeTaskStatus} onNewTask={handleNewTask} /> : <Redirect to="/" />} />
+        {/* <Route path="/hello/:name" render={props => <Hello name={props.match.params.name} />} /> */}
+        <Route path="/hello/:name" render={({ match: { params: { name } } }) => <Hello name={name} />} />
     </>
 })
