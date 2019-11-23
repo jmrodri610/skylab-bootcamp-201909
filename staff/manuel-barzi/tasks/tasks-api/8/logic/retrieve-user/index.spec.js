@@ -30,12 +30,19 @@ describe('logic - retrieve user', () => {
 
         expect(user).to.exist
         expect(user.id).to.equal(id)
+        expect(user.id).to.be.a('string')
         expect(user._id).to.not.exist
         expect(user.name).to.equal(name)
+        expect(user.name).to.be.a('string')
         expect(user.surname).to.equal(surname)
+        expect(user.surname).to.be.a('string')
         expect(user.email).to.equal(email)
+        expect(user.email).to.be.a('string')
         expect(user.username).to.equal(username)
+        expect(user.username).to.be.a('string')
         expect(user.password).to.be.undefined
+        expect(user.lastAccess).to.exist
+        expect(user.lastAccess).to.be.an.instanceOf(Date)
     })
 
     it('should fail on wrong user id', async () => {

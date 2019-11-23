@@ -10,7 +10,7 @@ module.exports = function (username, password) {
     validate.string.notVoid('password', password)
 
 	return (async () => {
-        const res = await call(`${API_URL}/auth`, {
+        const res = await call(`${API_URL}/users/auth`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })

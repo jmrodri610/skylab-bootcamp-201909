@@ -4,6 +4,7 @@ const { random } = Math
 const { errors: { NotFoundError } } = require('tasks-util')
 const { database, models: { User } } = require('tasks-data')
 const jwt = require('jsonwebtoken')
+require('../../helpers/jest-matchers')
 
 describe('logic - retrieve user', () => {
     beforeAll(() => database.connect(TEST_DB_URL))
@@ -31,12 +32,19 @@ describe('logic - retrieve user', () => {
 
         expect(user).toBeDefined()
         expect(user.id).toBe(id)
+        expect(user.id).toBeOfType('string')
         expect(user._id).toBeUndefined()
         expect(user.name).toBe(name)
+        expect(user.name).toBeOfType('string')
         expect(user.surname).toBe(surname)
+        expect(user.surname).toBeOfType('string')
         expect(user.email).toBe(email)
+        expect(user.email).toBeOfType('string')
         expect(user.username).toBe(username)
+        expect(user.username).toBeOfType('string')
         expect(user.password).toBeUndefined()
+        expect(user.lastAccess).toBeDefined()
+        expect(user.lastAccess).toBeInstanceOf(Date)
     })
 
     it('should fail on wrong user id', async () => {
