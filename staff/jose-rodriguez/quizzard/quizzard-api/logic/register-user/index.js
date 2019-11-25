@@ -1,5 +1,5 @@
-const { validate, errors: { ConflictError } } = require('tasks-util')
-const { models: { User } } = require('tasks-data')
+const { validate, errors: { ConflictError } } = require('quizzard-util')
+const { models: { User } } = require('quizzard-data')
 
 module.exports = function (name, surname, email, username, password) {
     validate.string(name)
