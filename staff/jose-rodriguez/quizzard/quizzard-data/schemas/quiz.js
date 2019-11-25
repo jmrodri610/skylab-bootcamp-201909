@@ -6,6 +6,11 @@ module.exports = new Schema({
         required: true
     },
 
+    title: {
+        type: String,
+        required: true
+    },
+
     pincode: {
         type: Number,
         required: true,
