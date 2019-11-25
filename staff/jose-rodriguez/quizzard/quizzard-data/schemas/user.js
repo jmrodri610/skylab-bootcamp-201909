@@ -1,4 +1,5 @@
 const { Schema } = require('mongoose')
+const { validators: {isEmail} } = require('quizzard-util')
 
 module.exports = new Schema({
     name: {
@@ -13,7 +14,8 @@ module.exports = new Schema({
 
     email: {
         type: String,
-        required: true
+        required: true,
+        validate: isEmail
     },
 
     username: {
