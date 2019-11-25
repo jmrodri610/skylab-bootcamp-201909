@@ -3,7 +3,7 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const { name, version } = require('./package.json')
-const { registerUser, authenticateUser, retrieveUser } = require('./logic')
+const { registerUser, authenticateUser, retrieveUser, createQuiz } = require('./logic')
 const jwt = require('jsonwebtoken')
 const { argv: [, , port], env: { SECRET, PORT = port || 8080, DB_URL } } = process
 const tokenVerifier = require('./helpers/token-verifier')(SECRET)
@@ -80,10 +80,11 @@ api.get('/users', tokenVerifier, (req, res) => {
     }
 })
 
-api.post('/tasks', tokenVerifier, jsonBodyParser, (req, res) => {
+api.post('/create', tokenVerifier, jsonBodyParser, (req, res) => {
     try {
-        const { id, body: { title, description } } = req
-        createTask(id, title, description)
+        const { id, body: { title } } = req
+        debugger
+        createQuiz(id, title)
             .then(id => res.status(201).json({ id }))
             .catch(error => {
                 const { message } = error
