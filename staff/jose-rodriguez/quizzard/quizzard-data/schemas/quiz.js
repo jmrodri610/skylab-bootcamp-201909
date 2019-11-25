@@ -16,11 +16,16 @@ module.exports = new Schema({
         type: Array
     },
 
-    rungame: {
-        type: Boolean
-    },
+    rungame: Boolean,
 
-    questions: [question]
+
+    questions: [{
+        description: String,
+        answer: {
+            aswer: String,
+            status: Boolean
+        }
+    }]
 })
 
 
