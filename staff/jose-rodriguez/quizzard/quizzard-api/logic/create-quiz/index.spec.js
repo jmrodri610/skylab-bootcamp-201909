@@ -38,9 +38,9 @@ describe.only('logic - create quiz', () => {
         expect(quiz).to.exist
         expect(quiz.user.toString()).to.equal(id)
         expect(quiz.title).to.equal(title)
-        expect(quiz.pinCode).to.exist
-        expect(quiz.pinCode).to.be.an.instanceOf(Number)
-        expect(quiz.runGame).to.equal('false')
+        expect(quiz.pincode).to.exist
+        expect(quiz.pincode).to.be.a('number')
+        expect(quiz.rungame).to.equal(false)
         expect(quiz.players).to.exist
         expect(quiz.players).to.be.instanceOf(Array)
         expect(quiz.questions).to.exist

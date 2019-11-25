@@ -10,7 +10,7 @@ module.exports = function (id, title) {
     validate.string(title)
     validate.string.notVoid('title', title)
 
-    
+    debugger
     const players = []
     const pincode = Math.floor(Math.random()*100000000)
     const rungame = Boolean(false)
