@@ -1,8 +1,8 @@
-
+@import url('https://fonts.googleapis.com/css?family=Lobster|Nanum+Gothic&display=swap')
     
 body
     animation: colorchange 20s infinite
-    font-family: sans-serif
+    font-family: 'Nanum Gothic', sans-serif
 
 .landing
     display: flex
@@ -15,27 +15,34 @@ body
         flex-direction: column
         justify-content: center
         align-items: center
-    // display: grid
-    // grid-template-columns: 1fr
-    // grid-template-rows:  55% 30% 15%
-    // grid-column-gap: 0px
-    // grid-row-gap: 0px 
-    // &__title
-    //     grid-area: 1 / 1 / 2 / 2
-    //     color: whitesmoke
-    //     letter-spacing: 0.3rem
-    //     font-size: 3rem
-    //     font-family: Comic Sans MS
-    // &__form
-    //     grid-area: 2 / 1 / 3 / 2
+        height: 70vh
+    &__title
+        color: whitesmoke
+        font-size: 3rem
+        font-family: 'Lobster', cursive
+    &__pincode
+        font-size: 1.5rem
+        border-radius: .5rem
+        border: solid black 0.2rem
+        text-align: center
+        margin-bottom: 0.7rem
+    &__start
+        background-color: whitesmoke
+        border-radius: 0.5rem
+        border: solid black 0.1rem
+        text-align: center
+        color: black
+        box-shadow: 4px 0px 39px 5px rgba(0,0,0,0.29)
+        font-size: 1.5rem
+    &__redirect
+        text-align: center
+        color: whitesmoke
+    &__home
+        font-family: 'Lobster', cursive
+        color: whitesmoke
+        &:link, :visited, :active
+            text-decoration: none
 
-    // &__start
-    //     background-color: white
-    //     border-radius: 2rem
-    //     text-align: center
-    //     color: black
-    // &__redirect
-    //     grid-area: 3 / 1 / 4 / 2
 
 
 @keyframes colorchange
