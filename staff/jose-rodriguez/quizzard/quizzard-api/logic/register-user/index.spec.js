@@ -3,8 +3,8 @@ const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
 const registerUser = require('.')
 const { random } = Math
-const { errors: { ContentError } } = require('tasks-util')
-const { database, models: { User } } = require('tasks-data')
+const { errors: { ContentError } } = require('quizzard-util')
+const { database, models: { User } } = require('quizzard-data')
 
 describe('logic - register user', () => {
     before(() => database.connect(DB_URL_TEST))

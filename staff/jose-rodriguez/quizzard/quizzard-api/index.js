@@ -3,12 +3,12 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const { name, version } = require('./package.json')
-const { registerUser, authenticateUser } = require('./logic')
+const { registerUser, authenticateUser, retrieveUser } = require('./logic')
 const jwt = require('jsonwebtoken')
 const { argv: [, , port], env: { SECRET, PORT = port || 8080, DB_URL } } = process
 const tokenVerifier = require('./helpers/token-verifier')(SECRET)
-const { errors: { NotFoundError, ConflictError, CredentialsError } } = require('tasks-util')
-const { database } = require('tasks-data')
+const { errors: { NotFoundError, ConflictError, CredentialsError } } = require('quizzard-util')
+const { database } = require('quizzard-data')
 
 const api = express()
 
