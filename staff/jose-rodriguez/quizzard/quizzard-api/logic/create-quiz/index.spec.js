@@ -8,7 +8,7 @@ const { database, models: { User, Quiz } } = require('quizzard-data')
 describe.only('logic - create quiz', () => {
     before(() => database.connect(DB_URL_TEST))
 
-    let id, name, surname, email, username, password, title, description
+    let id, name, surname, email, username, password, title, questions
 
     beforeEach(async () => {
         name = `name-${random()}`
@@ -24,10 +24,69 @@ describe.only('logic - create quiz', () => {
         id = user.id
 
         title = `title-${random()}`
+
+        questions = [{
+            description: "question 1",
+            answers: [{
+                "answer": "answer 1",
+                "status": true
+            },
+            {
+                "answer": "answer 2",
+                "status": false
+            },
+            {
+                "answer": "answer 3",
+                "status": false
+            },
+            {
+                "answer": "answer 4",
+                "status": false
+            }]
+        },
+        {
+            description: "question 2",
+            answers: [{
+                "answer": "answer 1",
+                "status": true
+            },
+            {
+                "answer": "answer 2",
+                "status": false
+            },
+            {
+                "answer": "answer 3",
+                "status": false
+            },
+            {
+                "answer": "answer 4",
+                "status": false
+            }]
+        },
+        {
+            description: "question 3",
+            answers: [{
+                "answer": "answer 1",
+                "status": true
+            },
+            {
+                "answer": "answer 2",
+                "status": false
+            },
+            {
+                "answer": "answer 3",
+                "status": false
+            },
+            {
+                "answer": "answer 4",
+                "status": false
+            }]
+        }]
+
     })
 
     it('should succeed on correct user and quiz data', async () => {
-        const quizId = await createQuiz(id, title)
+        const quizId = await createQuiz(id, title, questions)
 
         expect(quizId).to.exist
         expect(quizId).to.be.a('string')
@@ -45,10 +104,10 @@ describe.only('logic - create quiz', () => {
         expect(quiz.players).to.be.instanceOf(Array)
         expect(quiz.questions).to.exist
         expect(quiz.questions).to.be.instanceOf(Array)
-        
+
     })
 
 
-
+    debugger
     after(() => Promise.all([User.deleteMany(), Quiz.deleteMany()]).then(database.disconnect))
 })

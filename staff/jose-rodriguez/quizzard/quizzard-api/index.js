@@ -3,7 +3,7 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const { name, version } = require('./package.json')
-const { registerUser, authenticateUser, retrieveUser, createQuiz } = require('./logic')
+const { registerUser, authenticateUser, retrieveUser, createQuiz, listQuizs } = require('./logic')
 const jwt = require('jsonwebtoken')
 const { argv: [, , port], env: { SECRET, PORT = port || 8080, DB_URL } } = process
 const tokenVerifier = require('./helpers/token-verifier')(SECRET)
@@ -82,9 +82,9 @@ api.get('/users', tokenVerifier, (req, res) => {
 
 api.post('/create', tokenVerifier, jsonBodyParser, (req, res) => {
     try {
-        const { id, body: { title } } = req
+        const { id, body: { title, questions } } = req
         debugger
-        createQuiz(id, title)
+        createQuiz(id, title, questions)
             .then(id => res.status(201).json({ id }))
             .catch(error => {
                 const { message } = error
@@ -99,11 +99,28 @@ api.post('/create', tokenVerifier, jsonBodyParser, (req, res) => {
     }
 })
 
-api.get('/tasks', tokenVerifier, (req, res) => {
+api.post('/game', jsonBodyParser, tokenVerifier, (req,res) => {
+    try {
+        const { id, body: { quizId } } = req
+        createGame(id, quizId)
+            .then(pincode => res.status(201).json({pincode}))
+            .catch(error => {
+                const {message} = error
+                if (error instanceof NotFoundError)
+                    return res.status(404).json({ message })
+                    
+                res.status(500).json({ message })
+            })
+    } catch ({message}) {
+        res.status(400).json({message})
+    }
+})
+
+api.get('/quizs', tokenVerifier, (req, res) => {
     try {
         const { id } = req
-        listTasks(id)
-            .then(tasks => res.send(tasks))
+        listQuizs(id)
+            .then(quizs => res.send(quizs))
             .catch(error => {
                 const { message } = error
                 if (error instanceof NotFoundError)
@@ -117,11 +134,11 @@ api.get('/tasks', tokenVerifier, (req, res) => {
     }
 })
 
-api.patch('/tasks/:taskId', tokenVerifier, jsonBodyParser, (req, res) => {
+api.patch('/quizs/:quizId', tokenVerifier, jsonBodyParser, (req, res) => {
     try {
-        const { id, params: { taskId }, body: { title, description, status } } = req
+        const { id, params: { quizId }, body: { title, questions } } = req
 
-        modifyTask(id, taskId, title, description, status)
+        modifyQuiz(id, quizId, title, questions)
             .then(() => res.end())
             .catch(error => {
                 const { message } = error
