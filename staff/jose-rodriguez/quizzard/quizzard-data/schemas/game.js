@@ -2,7 +2,11 @@ const { Schema } = require('mongoose')
 const { Quiz } = require('./quiz')
 
 module.exports = new Schema({
-    quiz: [Quiz],
+    quiz: {
+        type: ObjectId,
+        ref: 'Quiz',
+        required: true
+    },
 
     pincode: {
         type: Number,
