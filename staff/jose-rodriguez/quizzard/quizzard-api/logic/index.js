@@ -3,5 +3,6 @@ module.exports = {
     authenticateUser: require('./authenticate-user'),
     retrieveUser: require('./retrieve-user'),
     createQuiz: require('./create-quiz'),
-    listQuizs: require('./list-quizs')
+    listQuizs: require('./list-quizs'),
+    createGame: require('./create-game')
 }
