@@ -11,16 +11,6 @@ module.exports = new Schema({
         required: true
     },
 
-    pincode: {
-        type: Number,
-        required: true,
-        value: Math.random()
-    },
-
-    players: {
-        type: Array
-    },
-
     rungame: Boolean,
 
 

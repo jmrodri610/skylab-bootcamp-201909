@@ -1,4 +1,5 @@
 module.exports = {
     user: require('./user'),
-    quiz: require('./quiz')
+    quiz: require('./quiz'),
+    game: require('./game')
 }

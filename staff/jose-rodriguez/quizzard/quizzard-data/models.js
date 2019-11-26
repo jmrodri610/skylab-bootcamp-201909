@@ -3,5 +3,6 @@ const { user, quiz } = require('./schemas')
 
 module.exports = {
     User: model('User', user),
-    Quiz: model('Quiz', quiz)
+    Quiz: model('Quiz', quiz),
+    Game: model('Game', game)
 }
