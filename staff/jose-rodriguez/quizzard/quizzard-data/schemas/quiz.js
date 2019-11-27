@@ -1,6 +1,6 @@
 const { Schema, ObjectId } = require('mongoose')
-const { Question } = require('./question')
-const { Player } = require('./player')
+const Question = require('./question')
+const Player = require('./player')
 
 module.exports = new Schema({
     owner: {
