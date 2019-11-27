@@ -1,5 +1,5 @@
 const { validate, errors: { NotFoundError } } = require('quizzard-util')
-const { ObjectId, models: { User, Quiz,  }} = require('quizzard-data')
+const { ObjectId, models: { User, Quiz,   }} = require('quizzard-data')
 
 module.exports = function (id, title, description, questions) {
     
