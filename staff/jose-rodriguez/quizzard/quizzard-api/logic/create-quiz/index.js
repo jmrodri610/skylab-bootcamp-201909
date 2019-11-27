@@ -1,7 +1,7 @@
 const { validate, errors: { NotFoundError } } = require('quizzard-util')
-const { ObjectId, models: { User, Quiz }} = require('quizzard-data')
+const { ObjectId, models: { User, Quiz,   }} = require('quizzard-data')
 
-module.exports = function (id, title, questions) {
+module.exports = function (id, title, description, questions) {
     
     validate.string(id)
     validate.string.notVoid('id', id)
@@ -18,7 +18,7 @@ module.exports = function (id, title, questions) {
 
         if(!user) throw new NotFoundError('user not found')
 
-        const quiz = await Quiz.create({user: id, title, questions})
+        const quiz = await Quiz.create({user: id, title, description, questions})
 
         return quiz.id
     })()
