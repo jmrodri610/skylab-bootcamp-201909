@@ -1,5 +1,5 @@
 const { Schema } = require('mongoose')
-const { Quiz } = require('./quiz')
+
 
 module.exports = new Schema({
     nickname: {

@@ -1,6 +1,6 @@
 const { Schema, ObjectId } = require('mongoose')
-const { Answer } = require('./answer')
-const { Response } = require('./response')
+const Answer = require('./answer')
+const Response = require('./response')
 
 
 module.exports = new Schema({
