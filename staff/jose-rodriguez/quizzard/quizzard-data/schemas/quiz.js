@@ -1,8 +1,11 @@
 const { Schema, ObjectId } = require('mongoose')
+const { Question } = require('./question')
+const { Player } = require('./player')
 
 module.exports = new Schema({
-    user: {
+    owner: {
         type: ObjectId,
+        ref: 'User',
         required: true
     },
 
@@ -11,16 +14,25 @@ module.exports = new Schema({
         required: true
     },
 
-    rungame: Boolean,
+    description: {
+        type: String,
+        required: true
+    },
 
+    status: {
+        type: String,
+        enum: ['started', 'finished'],
+        default: undefined
+    },
 
-    questions: [{
-        description: String,
-        answer: {
-            aswer: String,
-            status: Boolean
-        }
-    }]
+    currentQuestion: {
+        type: Number,
+        default: undefined
+    },
+
+    players: [Player],
+
+    questions: [Question]
 })
 
 
