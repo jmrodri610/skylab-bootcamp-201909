@@ -3,7 +3,7 @@ const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
 const createQuiz = require('.')
 const { random } = Math
-const { database, models: { User, Quiz } } = require('quizzard-data')
+const { database, models: { User, Quiz,  } } = require('quizzard-data')
 
 describe.only('logic - create quiz', () => {
     before(() => database.connect(DB_URL_TEST))
@@ -25,68 +25,34 @@ describe.only('logic - create quiz', () => {
 
         title = `title-${random()}`
 
+        title = `description-${random()}`
+debugger
         questions = [{
             description: "question 1",
             answers: [{
-                "answer": "answer 1",
-                "status": true
+                text: "answer 1",
+                valid: true
             },
             {
-                "answer": "answer 2",
-                "status": false
+                text: "answer 2",
+                valid: false
             },
             {
-                "answer": "answer 3",
-                "status": false
+                text: "answer 3",
+                valid: false
             },
             {
-                "answer": "answer 4",
-                "status": false
-            }]
-        },
-        {
-            description: "question 2",
-            answers: [{
-                "answer": "answer 1",
-                "status": true
-            },
-            {
-                "answer": "answer 2",
-                "status": false
-            },
-            {
-                "answer": "answer 3",
-                "status": false
-            },
-            {
-                "answer": "answer 4",
-                "status": false
-            }]
-        },
-        {
-            description: "question 3",
-            answers: [{
-                "answer": "answer 1",
-                "status": true
-            },
-            {
-                "answer": "answer 2",
-                "status": false
-            },
-            {
-                "answer": "answer 3",
-                "status": false
-            },
-            {
-                "answer": "answer 4",
-                "status": false
-            }]
+                text: "answer 4",
+                valid: false
+            }],
+            score: 100,
+            timing: 30
         }]
 
     })
 
-    it('should succeed on correct user and quiz data', async () => {
-        const quizId = await createQuiz(id, title, questions)
+    it('should succeed on correct user and quiz data', async () => {debugger
+        const quizId = await createQuiz(id, title, description, questions)
 
         expect(quizId).to.exist
         expect(quizId).to.be.a('string')
@@ -96,13 +62,23 @@ describe.only('logic - create quiz', () => {
 
         expect(quiz).to.exist
         expect(quiz.user.toString()).to.equal(id)
+
+        expect(quiz.title).to.exist
         expect(quiz.title).to.equal(title)
-        expect(quiz.pincode).to.exist
-        expect(quiz.pincode).to.be.a('number')
-        expect(quiz.rungame).to.equal(false)
+        expect(quiz.title).to.be.a('string')
+
+        expect(quiz.description).to.exist
+        expect(quiz.description).to.equal(description)
+        expect(quiz.description).to.be.a('string')
+
+        expect(quiz.status).to.exist
+        expect(quiz.status).to.equal(undefined)
+
         expect(quiz.players).to.exist
         expect(quiz.players).to.be.instanceOf(Array)
+
         expect(quiz.questions).to.exist
+        expect(quiz.questions).to.have.length.greaterThan(0)
         expect(quiz.questions).to.be.instanceOf(Array)
 
     })
