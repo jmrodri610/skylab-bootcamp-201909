@@ -3,7 +3,7 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const { name, version } = require('./package.json')
-const { registerUser, authenticateUser, retrieveUser, createQuiz, listQuizs } = require('./logic')
+const { registerUser, authenticateUser, retrieveUser, createQuiz, createGame, listQuizs } = require('./logic')
 const jwt = require('jsonwebtoken')
 const { argv: [, , port], env: { SECRET, PORT = port || 8080, DB_URL } } = process
 const tokenVerifier = require('./helpers/token-verifier')(SECRET)

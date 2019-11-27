@@ -16,11 +16,14 @@ module.exports = function (id, quizId) {
 
         if(!user) throw new NotFoundError('user not found')
 
-        const quiz = await Quiz.findById(quizId)
+        let quiz = await Quiz.findById(quizId)
 
         if(!quiz) throw new NotFoundError('user not found')
 
-        const game = await Game.create({})
+        quiz = quizId
+
+
+        const game = await Game.create({quiz, enum: 'WAIT'})
 
         return game.pincode
     })()
