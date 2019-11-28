@@ -3,7 +3,7 @@ const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
 const createQuiz = require('.')
 const { random } = Math
-const { database, models: { User, Quiz,  } } = require('quizzard-data')
+const { database, models: { User, Quiz } } = require('quizzard-data')
 
 describe.only('logic - create quiz', () => {
     before(() => database.connect(DB_URL_TEST))
@@ -25,33 +25,34 @@ describe.only('logic - create quiz', () => {
 
         title = `title-${random()}`
 
-        title = `description-${random()}`
-debugger
+        description = `description-${random()}`
+        
         questions = [{
-            description: "question 1",
-            answers: [{
-                text: "answer 1",
-                valid: true
+            "text": "question 1",
+            "answers": [{
+                "text": "answer 1",
+                "valid": true
             },
             {
-                text: "answer 2",
-                valid: false
+                "text": "answer 2",
+                "valid": false
             },
             {
-                text: "answer 3",
-                valid: false
+                "text": "answer 3",
+                "valid": false
             },
             {
-                text: "answer 4",
-                valid: false
+                "text": "answer 4",
+                "valid": false
             }],
-            score: 100,
-            timing: 30
+            "score": 100,
+            "timing": 30
         }]
 
     })
 
-    it('should succeed on correct user and quiz data', async () => {debugger
+    it('should succeed on correct user and quiz data', async () => {
+        
         const quizId = await createQuiz(id, title, description, questions)
 
         expect(quizId).to.exist
@@ -61,7 +62,7 @@ debugger
         const quiz = await Quiz.findById(quizId)
 
         expect(quiz).to.exist
-        expect(quiz.user.toString()).to.equal(id)
+        expect(quiz.owner.toString()).to.equal(id)
 
         expect(quiz.title).to.exist
         expect(quiz.title).to.equal(title)
@@ -70,9 +71,10 @@ debugger
         expect(quiz.description).to.exist
         expect(quiz.description).to.equal(description)
         expect(quiz.description).to.be.a('string')
+        debugger
+        expect(quiz.status).to.be.undefined
 
-        expect(quiz.status).to.exist
-        expect(quiz.status).to.equal(undefined)
+        expect(quiz.currentQuestion).to.be.undefined
 
         expect(quiz.players).to.exist
         expect(quiz.players).to.be.instanceOf(Array)
@@ -84,6 +86,6 @@ debugger
     })
 
 
-    debugger
+
     after(() => Promise.all([User.deleteMany(), Quiz.deleteMany()]).then(database.disconnect))
 })

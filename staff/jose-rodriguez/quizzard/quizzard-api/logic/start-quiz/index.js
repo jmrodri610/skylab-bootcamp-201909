@@ -16,11 +16,15 @@ module.exports = function (id, quizId) {
 
         if(!user) throw new NotFoundError('user not found')
 
-        let quiz = await Quiz.findById(id)
+        let quiz = await Quiz.findById(quizId)
 
         if(!quiz) throw new NotFoundError('quiz not found')
 
         quiz.status = 'started'
+
+        quiz.currentQuestion = 0
+
+        await quiz.save()
 
         return quiz.id
     })()
