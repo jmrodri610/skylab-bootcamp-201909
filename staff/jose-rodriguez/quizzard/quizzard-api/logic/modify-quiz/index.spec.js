@@ -5,7 +5,7 @@ const modifyQuiz = require('.')
 const { random } = Math
 const { errors: { NotFoundError, ConflictError }, polyfills: { arrayRandom } } = require('quizzard-util')
 const { database, ObjectId, models: { User, Quiz } } = require('quizzard-data')
-debugger
+
 arrayRandom()
 
 describe('logic - modify quiz', () => {

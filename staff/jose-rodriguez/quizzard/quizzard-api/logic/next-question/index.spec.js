@@ -3,7 +3,8 @@ const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
 const nextQuestion = require('.')
 const { random } = Math
-const { database, models: { User, Quiz, Player } } = require('quizzard-data')
+const {errors: {NotFoundError, ConflictError, ContentError}} = require('quizzard-util')
+const { database, models: { User, Quiz } } = require('quizzard-data')
 
 describe('logic - enable next question', () => {
     before(() => database.connect(DB_URL_TEST))
@@ -106,6 +107,72 @@ describe('logic - enable next question', () => {
         expect(quiz.currentQuestion).to.equal(currentQuestion_ + 1)
 
 
+    })
+
+    it('should fail on incorrect owner and quiz data', async () => {
+        id = '5de0fea2bfdcadf08120aaf6'
+
+        try {
+            await nextQuestion(id, quizId)
+
+            throw new Error('should not reach this point')
+        } catch (error) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceOf(ConflictError)
+
+            const { message } = error
+            expect(message).to.equal(`only the owner of this quiz can do this action`)
+        }
+    })
+
+    
+
+    it('should fail on non-existing quiz request', async () => {
+        quizId = '5de0fea2bfdcadf08120aaf6'
+
+        try {
+            await nextQuestion(id, quizId)
+
+            throw new Error('should not reach this point')
+        } catch (error) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceOf(NotFoundError)
+
+            const { message } = error
+            expect(message).to.equal('quiz not found')
+        }
+    })
+
+    it('should fail on incorrect user id format', async () => {
+        id = 'userId'
+
+        try {
+            await nextQuestion(id, quizId)
+
+            throw new Error('should not reach this point')
+        } catch (error) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceOf(ContentError)
+
+            const { message } = error
+            expect(message).to.equal('userId is not a valid id')
+        }
+    })
+
+    it('should fail on incorrect quiz id format', async () => {
+        quizId = 'quizId'
+
+        try {
+            await nextQuestion(id, quizId)
+
+            throw new Error('should not reach this point')
+        } catch (error) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceOf(ContentError)
+
+            const { message } = error
+            expect(message).to.equal('quizId is not a valid id')
+        }
     })
 
 after(() => Promise.all([User.deleteMany(), Quiz.deleteMany()]).then(database.disconnect))

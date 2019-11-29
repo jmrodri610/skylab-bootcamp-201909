@@ -3,6 +3,7 @@ const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
 const startQuiz = require('.')
 const { random } = Math
+const {errors: {NotFoundError, ConflictError, ContentError}} = require('quizzard-util')
 const { database, models: { User, Quiz } } = require('quizzard-data')
 
 describe('logic - start quiz', () => {
@@ -90,6 +91,70 @@ describe('logic - start quiz', () => {
         expect(quiz.questions).to.have.length.greaterThan(0)
         expect(quiz.questions).to.be.instanceOf(Array)
 
+    })
+
+    it('should fail on incorrect owner and quiz data', async () => {
+        id = '5de0fea2bfdcadf08120aaf6'
+
+        try {
+            await startQuiz(id, quizId)
+
+            throw new Error('should not reach this point')
+        } catch (error) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceOf(ConflictError)
+
+            const { message } = error
+            expect(message).to.equal(`only the owner of this quiz can do this action`)
+        }
+    })
+
+    it('should fail on non-existing quiz request', async () => {
+        quizId = '5de0fea2bfdcadf08120aaf6'
+
+        try {
+            await startQuiz(id, quizId)
+
+            throw new Error('should not reach this point')
+        } catch (error) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceOf(NotFoundError)
+
+            const { message } = error
+            expect(message).to.equal('quiz not found')
+        }
+    })
+
+    it('should fail on incorrect user id format', async () => {
+        id = 'userId'
+
+        try {
+            await startQuiz(id, quizId)
+
+            throw new Error('should not reach this point')
+        } catch (error) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceOf(ContentError)
+
+            const { message } = error
+            expect(message).to.equal('userId is not a valid id')
+        }
+    })
+
+    it('should fail on incorrect quiz id format', async () => {
+        quizId = 'quizId'
+
+        try {
+            await startQuiz(id, quizId)
+
+            throw new Error('should not reach this point')
+        } catch (error) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceOf(ContentError)
+
+            const { message } = error
+            expect(message).to.equal('quizId is not a valid id')
+        }
     })
 
 

@@ -3,7 +3,7 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const { name, version } = require('./package.json')
-const { registerUser, authenticateUser, retrieveUser, createQuiz, startQuiz, enrollQuiz, retrieveQuiz, questionStarted, nextQuestion, retrieveCurrentQuestion, submitAnswer } = require('./logic')
+const { registerUser, authenticateUser, retrieveUser, createQuiz, startQuiz, enrollQuiz, retrieveQuiz, questionStarted, nextQuestion, retrieveQuestion, submitAnswer } = require('./logic')
 const jwt = require('jsonwebtoken')
 const { argv: [, , port], env: { SECRET, PORT = port || 8080, DB_URL } } = process
 const tokenVerifier = require('./helpers/token-verifier')(SECRET)
@@ -209,11 +209,8 @@ api.post('/play/question', jsonBodyParser, (req, res) => {
     try {
         const { body: { playerId, quizId } } = req
 
-        retrieveCurrentQuestion(playerId, quizId)
-            .then(question => {
-                const {text, timing, score, answers} = question
-                let answer = answers.map(answer => { return answer.text })
-                res.status(200).json({ text, timing, score, answer })})
+        retrieveQuestion(playerId, quizId)
+            .then(question => res.status(200).json({ question }))
             .catch(error => {
                 const { message } = error
 
