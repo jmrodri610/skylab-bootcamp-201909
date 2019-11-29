@@ -3,11 +3,13 @@ module.exports = {
     authenticateUser: require('./authenticate-user'),
     retrieveUser: require('./retrieve-user'),
     createQuiz: require('./create-quiz'),
-    listQuizs: require('./list-quizs'),
-    createGame: require('./create-game'),
     startQuiz: require('./start-quiz'),
     enrollQuiz: require('./enroll-quiz'),
     retrieveQuiz: require('./retrieve-quiz'),
-    questionStarted: require('./question-launched'),
-    nextQuestion: require('./next-question')
-}
+    questionStarted: require('./question-started'),
+    nextQuestion: require('./next-question'),
+    retrieveCurrentQuestion: require('./retrieve-current-question'),
+    modifyQuiz: require('./modify-quiz'),
+    listQuizs: require('./list-quizs'),
+    submitAnswer: require('./submit-answer')
+}   

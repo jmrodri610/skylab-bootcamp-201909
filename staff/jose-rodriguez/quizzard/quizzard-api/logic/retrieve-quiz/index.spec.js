@@ -5,7 +5,7 @@ const retrieveQuiz = require('.')
 const { random } = Math
 const { database, models: { User, Quiz, Player } } = require('quizzard-data')
 
-describe.only('logic - enroll quiz', () => {
+describe('logic - retrieve quiz', () => {
     before(() => database.connect(DB_URL_TEST))
 
     let id, name, surname, email, username, password, title, questions, quizId, nickname, playerId

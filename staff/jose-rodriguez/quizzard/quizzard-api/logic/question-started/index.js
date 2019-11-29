@@ -1,7 +1,7 @@
-const { validate, errors: { NotFoundError, ContentError } } = require('quizzard-util')
+const { validate, errors: { NotFoundError, ContentError, ConflictError } } = require('quizzard-util')
 const { ObjectId, models: { Quiz } } = require('quizzard-data')
 
-module.exports = function (playerId, quizId, currentQuestion) {
+module.exports = function (playerId, quizId) {
 
 
     validate.string(playerId)
@@ -17,7 +17,7 @@ module.exports = function (playerId, quizId, currentQuestion) {
     return (async () => {
         const quiz = await Quiz.findById(quizId)
 
-        if (!quiz) throw new NotFoundError('user not found')
+        if (!quiz) throw new NotFoundError('quiz not found')
 
         const { players } = quiz
         debugger
@@ -25,7 +25,10 @@ module.exports = function (playerId, quizId, currentQuestion) {
 
 
             if (players[i]._id.toString() === playerId) {
-                if (quiz.questions[currentQuestion].status === 'started') {
+                const {currentQuestion, questions} = quiz
+                debugger
+                if( currentQuestion >= questions.length) throw new ConflictError('Question not found, please contact to the administrator')
+                if (questions[currentQuestion].status === 'started') {
                     return true  
                 } else {
                     return false

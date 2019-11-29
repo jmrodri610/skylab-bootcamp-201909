@@ -3,9 +3,10 @@ const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
 const createQuiz = require('.')
 const { random } = Math
+const { errors: { ContentError } } = require('quizzard-util')
 const { database, models: { User, Quiz } } = require('quizzard-data')
 
-describe.only('logic - create quiz', () => {
+describe('logic - create quiz', () => {
     before(() => database.connect(DB_URL_TEST))
 
     let id, name, surname, email, username, password, title, questions
@@ -30,7 +31,7 @@ describe.only('logic - create quiz', () => {
         questions = [{
             "text": "question 1",
             "answers": [{
-                "text": "answer 1",
+                text: "answer 1",
                 "valid": true
             },
             {
@@ -83,6 +84,37 @@ describe.only('logic - create quiz', () => {
         expect(quiz.questions).to.have.length.greaterThan(0)
         expect(quiz.questions).to.be.instanceOf(Array)
 
+    })
+
+    it('should fail on incorrect name, surname, email, password, or expression type and content', () => {
+        expect(() => createQuiz(1)).to.throw(TypeError, '1 is not a string')
+        expect(() => createQuiz(true)).to.throw(TypeError, 'true is not a string')
+        expect(() => createQuiz([])).to.throw(TypeError, ' is not a string')
+        expect(() => createQuiz({})).to.throw(TypeError, '[object Object] is not a string')
+        expect(() => createQuiz(undefined)).to.throw(TypeError, 'undefined is not a string')
+        expect(() => createQuiz(null)).to.throw(TypeError, 'null is not a string')
+
+
+        expect(() => createQuiz(id, 1)).to.throw(TypeError, '1 is not a string')
+        expect(() => createQuiz(id, true)).to.throw(TypeError, 'true is not a string')
+        expect(() => createQuiz(id, [])).to.throw(TypeError, ' is not a string')
+        expect(() => createQuiz(id, {})).to.throw(TypeError, '[object Object] is not a string')
+        expect(() => createQuiz(id, undefined)).to.throw(TypeError, 'undefined is not a string')
+        expect(() => createQuiz(id, null)).to.throw(TypeError, 'null is not a string')
+
+        expect(() => createQuiz(id, '')).to.throw(ContentError, 'title is empty or blank')
+        expect(() => createQuiz(id, ' \t\r')).to.throw(ContentError, 'title is empty or blank')
+
+
+        expect(() => createQuiz(id, title, 1)).to.throw(TypeError, '1 is not a string')
+        expect(() => createQuiz(id, title, true)).to.throw(TypeError, 'true is not a string')
+        expect(() => createQuiz(id, title, [])).to.throw(TypeError, ' is not a string')
+        expect(() => createQuiz(id, title, {})).to.throw(TypeError, '[object Object] is not a string')
+        expect(() => createQuiz(id, title, undefined)).to.throw(TypeError, 'undefined is not a string')
+        expect(() => createQuiz(id, title, null)).to.throw(TypeError, 'null is not a string')
+
+        expect(() => createQuiz(id, title, '')).to.throw(ContentError, 'description is empty or blank')
+        expect(() => createQuiz(id, title, ' \t\r')).to.throw(ContentError, 'description is empty or blank')
     })
 
 
