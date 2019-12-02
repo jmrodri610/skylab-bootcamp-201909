@@ -36,7 +36,6 @@ module.exports = function (playerId, quizId) {
                 return retrieveQuestion
                 
             }   
-            debugger
         } 
         throw new NotFoundError('player not found into this quiz. Contact to quizz administrator')
     
