@@ -1,15 +1,15 @@
 require('dotenv').config()
 const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
-const submitAnswer = require('.')
+const nextQuestion = require('.')
 const { random } = Math
-const {errors: {NotFoundError, ContentError}} = require('quizzard-util')
-const { ObjectId, database, models: { User, Quiz } } = require('quizzard-data')
+const {errors: {NotFoundError, ConflictError, ContentError}} = require('quizzard-util')
+const { database, models: { User, Quiz } } = require('quizzard-data')
 
-describe('logic - submit Answer', () => {
+describe('logic - enable next question', () => {
     before(() => database.connect(DB_URL_TEST))
 
-    let id, name, surname, email, username, password, title, questions, quizId, description, status, playerId, answers
+    let id, name, surname, email, username, password, title, questions, quizId, description, status, currentQuestion
 
     beforeEach(async () => {
         name = `name-${random()}`
@@ -54,25 +54,11 @@ describe('logic - submit Answer', () => {
             "timing": 30
         }]
 
-        players_= [
-            {
-                "score": 0,
-                "_id": ObjectId("5ddf9120c8b3c82695ba4376"),
-                "nickname": "jechto"
-            },
-            {
-                "score": 0,
-                "_id": ObjectId("5ddf9144735f2326c4185e29"),
-                "nickname": "jose"
-            }
-        ]
-
         
 
         const quiz = await Quiz.create({ owner: id, title, description, status, currentQuestion: currentQuestion_, questions })
 
         quizId = quiz.id
-        playerId = '5ddf9144735f2326c4185e29'
 
     })
 
@@ -110,30 +96,42 @@ describe('logic - submit Answer', () => {
 
     })
 
-    it('should succeed on correct submit answer', async () => {
+    it('should succeed on correct change question status and startTime', async () => {
 
         let quiz = await Quiz.findById(quizId)
-
-        const answers = ["5ddf8df7c1225022cd84b748", "5ddf8df7c1225022cd84b747"] 
         debugger
-        quiz = await submitAnswer(playerId, quizId, answers)
-
-        const {currentQuestion, questions} = quiz
+        quiz = await nextQuestion(id, quizId)
         
-        expect(questions[currentQuestion].responses).to.exist
-        expect(questions[currentQuestion].responses).to.be.instanceOf(Array)
-        expect(questions[currentQuestion].responses).to.have.length.greaterThan(0)
+        expect(quiz.currentQuestion).to.exist
+        expect(quiz.currentQuestion).to.be.a('number')
+        expect(quiz.currentQuestion).to.equal(currentQuestion_ + 1)
+
 
     })
 
+    it('should fail on incorrect owner and quiz data', async () => {
+        id = '5de0fea2bfdcadf08120aaf6'
 
+        try {
+            await nextQuestion(id, quizId)
 
+            throw new Error('should not reach this point')
+        } catch (error) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceOf(ConflictError)
+
+            const { message } = error
+            expect(message).to.equal(`only the owner of this quiz can do this action`)
+        }
+    })
+
+    
 
     it('should fail on non-existing quiz request', async () => {
         quizId = '5de0fea2bfdcadf08120aaf6'
 
         try {
-            await submitAnswer(playerId, quizId, answers)
+            await nextQuestion(id, quizId)
 
             throw new Error('should not reach this point')
         } catch (error) {
@@ -145,11 +143,11 @@ describe('logic - submit Answer', () => {
         }
     })
 
-    it('should fail on incorrect player id format', async () => {
-        playerId = 'playerId'
+    it('should fail on incorrect user id format', async () => {
+        id = 'userId'
 
         try {
-            await submitAnswer(playerId, quizId, answers)
+            await nextQuestion(id, quizId)
 
             throw new Error('should not reach this point')
         } catch (error) {
@@ -157,7 +155,7 @@ describe('logic - submit Answer', () => {
             expect(error).to.be.an.instanceOf(ContentError)
 
             const { message } = error
-            expect(message).to.equal('playerId is not a valid id')
+            expect(message).to.equal('userId is not a valid id')
         }
     })
 
@@ -165,7 +163,7 @@ describe('logic - submit Answer', () => {
         quizId = 'quizId'
 
         try {
-            await submitAnswer(playerId, quizId, answers)
+            await nextQuestion(id, quizId)
 
             throw new Error('should not reach this point')
         } catch (error) {
@@ -174,22 +172,6 @@ describe('logic - submit Answer', () => {
 
             const { message } = error
             expect(message).to.equal('quizId is not a valid id')
-        }
-    })
-
-    it('should fail on incorrect answer id format', async () => {
-        answers = ['answer1', 'answer2', 'answer3', 'answer4']
-
-        try {
-            await submitAnswer(playerId, quizId, answers)
-
-            throw new Error('should not reach this point')
-        } catch (error) {
-            expect(error).to.exist
-            expect(error).to.be.an.instanceOf(ContentError)
-
-            const { message } = error
-            expect(message).to.equal('invalid id')
         }
     })
 

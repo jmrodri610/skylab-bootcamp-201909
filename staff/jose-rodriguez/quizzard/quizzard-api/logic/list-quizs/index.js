@@ -12,15 +12,15 @@ module.exports = function (id) {
         if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
 
-        const quizs = await Quiz.find({ user: id }, { __v: 0 }).lean()
+        const quizs = await Quiz.find({ owner: id }, { __v: 0 }).lean()
 
         quizs.forEach(quiz => {
             quiz.id = quiz._id.toString()
             delete quiz._id
 
-            quiz.user = id
+            quiz.owner = id
         })
-
+        debugger
         return quizs
     })()
 }

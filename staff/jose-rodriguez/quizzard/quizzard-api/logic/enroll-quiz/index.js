@@ -1,4 +1,4 @@
-const { validate, errors: { NotFoundError } } = require('quizzard-util')
+const { validate, errors: { NotFoundError, ConflictError } } = require('quizzard-util')
 const { ObjectId, models: { Quiz, Player }} = require('quizzard-data')
 
 module.exports = function (quizId, nickname) {
@@ -10,18 +10,33 @@ module.exports = function (quizId, nickname) {
     validate.string(nickname)
     validate.string.notVoid('nickname', nickname)
 
-    debugger
+
     
-
+    
     return (async () => {
+
+
         let quiz = await Quiz.findById(quizId)
-
+    
         if(!quiz) throw new NotFoundError('quiz not found')
+        
+        
+        if (quiz.status === 'started') {
 
-        const player = await Player.create({nickname})
+            const { players } = quiz
+            const player = new Player({nickname})
+            players.push(player)
 
-        quiz = quiz.players.push(player)
+            await quiz.save()
 
-        return player.id
+            quiz = quiz.toObject()
+            
+            return player.id
+
+
+        } else {
+            throw new ConflictError('this quiz has not been started')
+        }
     })()
+
 }

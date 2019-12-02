@@ -1,11 +1,12 @@
 require('dotenv').config()
 const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
-const retrieveQuiz = require('.')
+const retrieveQuestion = require('.')
 const { random } = Math
+const { errors: { ConflictError, NotFoundError } } = require('quizzard-util')
 const { database, models: { User, Quiz, Player } } = require('quizzard-data')
 
-describe('logic - retrieve quiz', () => {
+describe('logic - retrieve current question', () => {
     before(() => database.connect(DB_URL_TEST))
 
     let id, name, surname, email, username, password, title, questions, quizId, nickname, playerId
@@ -112,8 +113,6 @@ describe('logic - retrieve quiz', () => {
         expect(quiz.status).to.exist
         expect(quiz.status).to.equal('started')
 
-        quiz = await Quiz.findById(quizId)
-        
         expect(quiz.players).to.exist
         expect(quiz.players).to.be.instanceOf(Array)
         expect(quiz.players).to.have.length.greaterThan(0)
@@ -122,32 +121,37 @@ describe('logic - retrieve quiz', () => {
 
     })
 
-    it('should succeed on correct retrieve quiz data for a player', async () => {
+    it('should succeed on correct retrieve quiz currentQuestion ', async () => {
 
-        quiz = await Quiz.findById(quizId)
+        let quiz = await Quiz.findById(quizId)
+        
         quiz.status = 'started'
+        quiz.currentQuestion = 0
         const { players } = quiz
         const player = new Player({nickname})
         players.push(player)
 
         await quiz.save()
-        
+
         playerId = player.id
         
+        const retrievedQuestion = await retrieveQuestion(playerId, quizId)
 
-        quiz = await retrieveQuiz(playerId, quizId)
+        expect(retrievedQuestion.text_).to.exist
+        expect(retrievedQuestion.text_).to.be.a('string')
+        expect(retrievedQuestion.text_).to.have.length.greaterThan(0)
 
-        expect(quiz.title).to.exist
-        expect(quiz.title).to.be.a('string')
-        expect(quiz.title).to.have.length.greaterThan(0)
-
-        expect(quiz.status).to.exist
-        expect(quiz.status).to.equal('started')
+        expect(retrievedQuestion.answer).to.exist
+        expect(retrievedQuestion.answer).to.be.instanceOf(Array)
+        expect(retrievedQuestion.answer).to.have.length.greaterThan(0)
         
-        expect(quiz.description).to.exist
-        expect(quiz.description).to.be.a('string')
-        expect(quiz.description).to.have.length.greaterThan(0)
-        
+        expect(retrievedQuestion.score_).to.exist
+        expect(retrievedQuestion.score_).to.be.a('number')
+        expect(retrievedQuestion.score_).to.be.greaterThan(0)
+
+        expect(retrievedQuestion.timing_).to.be.a('number')
+        expect(retrievedQuestion.timing_).to.be.greaterThan(0)
+
 
     })
 
@@ -167,7 +171,7 @@ describe('logic - retrieve quiz', () => {
         playerId = player2.id
 
         try {
-            await retrieveQuiz(playerId, quizId)
+            await retrieveQuestion(playerId, quizId)
 
             throw Error('should not reach this point')
         } catch (error) {
@@ -177,6 +181,63 @@ describe('logic - retrieve quiz', () => {
             expect(typeof error.message).to.equal('string')
             expect(error.message.length).to.be.greaterThan(0)
             expect(error.message).to.equal('player not found into this quiz. Contact to quizz administrator')
+        }
+    })
+
+    it('should fail on incorrect question request', async () => {
+        
+        quiz = await Quiz.findById(quizId)
+        quiz.currentQuestion = 3
+
+        const player = new Player({nickname})
+        quiz.players.push(player)
+        playerId = player.id
+        quiz.status = 'started'
+        await quiz.save()
+        debugger
+
+        try {
+            await retrieveQuestion(playerId, quizId)
+
+            throw new Error('should not reach this point')
+        } catch (error) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceOf(ConflictError)
+
+            const { message } = error
+            expect(message).to.equal(`Question not found, please contact to the administrator`)
+        }
+    })
+
+    it('should fail on non-existing quiz request', async () => {
+        quizId = '5de0fea2bfdcadf08120aaf6'
+
+        try {
+            await retrieveQuestion(playerId, quizId)
+
+            throw new Error('should not reach this point')
+        } catch (error) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceOf(NotFoundError)
+
+            const { message } = error
+            expect(message).to.equal(`quiz not found`)
+        }
+    })
+
+    it('should fail on non-existing a player into a quiz', async () => {
+        playerId = '5ddf9144735f2326c4185e45'
+
+        try {
+            await retrieveQuestion(playerId, quizId)
+
+            throw new Error('should not reach this point')
+        } catch (error) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceOf(NotFoundError)
+
+            const { message } = error
+            expect(message).to.equal(`player not found into this quiz. Contact to quizz administrator`)
         }
     })
 

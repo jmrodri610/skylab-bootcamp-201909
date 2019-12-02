@@ -1,15 +1,15 @@
 require('dotenv').config()
 const { env: { DB_URL_TEST } } = process
 const { expect } = require('chai')
-const submitAnswer = require('.')
+const questionStarted = require('.')
 const { random } = Math
-const {errors: {NotFoundError, ContentError}} = require('quizzard-util')
-const { ObjectId, database, models: { User, Quiz } } = require('quizzard-data')
+const { errors: { ConflictError, NotFoundError } } = require('quizzard-util')
+const { database, ObjectId, models: { User, Quiz } } = require('quizzard-data')
 
-describe('logic - submit Answer', () => {
+describe('logic - enable next question', () => {
     before(() => database.connect(DB_URL_TEST))
 
-    let id, name, surname, email, username, password, title, questions, quizId, description, status, playerId, answers
+    let id, name, surname, email, username, password, title, questions, quizId, description, status, players, playerId
 
     beforeEach(async () => {
         name = `name-${random()}`
@@ -67,9 +67,7 @@ describe('logic - submit Answer', () => {
             }
         ]
 
-        
-
-        const quiz = await Quiz.create({ owner: id, title, description, status, currentQuestion: currentQuestion_, questions })
+        const quiz = await Quiz.create({ owner: id, title, description, status, currentQuestion: currentQuestion_, players: players_, questions })
 
         quizId = quiz.id
         playerId = '5ddf9144735f2326c4185e29'
@@ -110,30 +108,41 @@ describe('logic - submit Answer', () => {
 
     })
 
-    it('should succeed on correct submit answer', async () => {
+    it('should succeed on correct response of question status', async () => {
 
-        let quiz = await Quiz.findById(quizId)
-
-        const answers = ["5ddf8df7c1225022cd84b748", "5ddf8df7c1225022cd84b747"] 
-        debugger
-        quiz = await submitAnswer(playerId, quizId, answers)
-
-        const {currentQuestion, questions} = quiz
         
-        expect(questions[currentQuestion].responses).to.exist
-        expect(questions[currentQuestion].responses).to.be.instanceOf(Array)
-        expect(questions[currentQuestion].responses).to.have.length.greaterThan(0)
+        res = await questionStarted(playerId, quizId)
+
+        expect(res).to.exist
+        expect(res).to.be.a('boolean')
 
     })
 
+    it('should fail on incorrect question request', async () => {
+        debugger
+        quiz = await Quiz.findById(quizId)
+        quiz.currentQuestion = 3
 
+        await quiz.save()
 
+        try {
+            await questionStarted(playerId, quizId)
+
+            throw new Error('should not reach this point')
+        } catch (error) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceOf(ConflictError)
+
+            const { message } = error
+            expect(message).to.equal(`Question not found, please contact to the administrator`)
+        }
+    })
 
     it('should fail on non-existing quiz request', async () => {
         quizId = '5de0fea2bfdcadf08120aaf6'
 
         try {
-            await submitAnswer(playerId, quizId, answers)
+            await questionStarted(playerId, quizId)
 
             throw new Error('should not reach this point')
         } catch (error) {
@@ -141,57 +150,26 @@ describe('logic - submit Answer', () => {
             expect(error).to.be.an.instanceOf(NotFoundError)
 
             const { message } = error
-            expect(message).to.equal('quiz not found')
+            expect(message).to.equal(`quiz not found`)
         }
     })
 
-    it('should fail on incorrect player id format', async () => {
-        playerId = 'playerId'
+    it('should fail on non-existing a player into a quiz', async () => {
+        playerId = '5ddf9144735f2326c4185e45'
 
         try {
-            await submitAnswer(playerId, quizId, answers)
+            await questionStarted(playerId, quizId)
 
             throw new Error('should not reach this point')
         } catch (error) {
             expect(error).to.exist
-            expect(error).to.be.an.instanceOf(ContentError)
+            expect(error).to.be.an.instanceOf(NotFoundError)
 
             const { message } = error
-            expect(message).to.equal('playerId is not a valid id')
+            expect(message).to.equal(`player not found into this quiz. Contact to quizz administrator`)
         }
     })
 
-    it('should fail on incorrect quiz id format', async () => {
-        quizId = 'quizId'
 
-        try {
-            await submitAnswer(playerId, quizId, answers)
-
-            throw new Error('should not reach this point')
-        } catch (error) {
-            expect(error).to.exist
-            expect(error).to.be.an.instanceOf(ContentError)
-
-            const { message } = error
-            expect(message).to.equal('quizId is not a valid id')
-        }
-    })
-
-    it('should fail on incorrect answer id format', async () => {
-        answers = ['answer1', 'answer2', 'answer3', 'answer4']
-
-        try {
-            await submitAnswer(playerId, quizId, answers)
-
-            throw new Error('should not reach this point')
-        } catch (error) {
-            expect(error).to.exist
-            expect(error).to.be.an.instanceOf(ContentError)
-
-            const { message } = error
-            expect(message).to.equal('invalid id')
-        }
-    })
-
-after(() => Promise.all([User.deleteMany(), Quiz.deleteMany()]).then(database.disconnect))
+    after(() => Promise.all([User.deleteMany(), Quiz.deleteMany()]).then(database.disconnect))
 })

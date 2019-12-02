@@ -1,8 +1,8 @@
-const { validate, errors: { NotFoundError } } = require('quizzard-util')
-const { ObjectId, models: { Quiz }} = require('quizzard-data')
+const { validate, errors: { NotFoundError, ContentError } } = require('quizzard-util')
+const { ObjectId, models: { Quiz } } = require('quizzard-data')
 
 module.exports = function (playerId, quizId) {
-    
+
     validate.string(quizId)
     validate.string.notVoid('quizId', quizId)
     if (!ObjectId.isValid(quizId)) throw new ContentError(`${quizId} is not a valid id`)
@@ -13,14 +13,24 @@ module.exports = function (playerId, quizId) {
 
 
     return (async () => {
-        let quiz = await User.findById(quizId)
 
-        if(!quiz) throw new NotFoundError('quiz not found')
+        let quiz = await Quiz.findById(quizId).lean()
 
-        let player = await Quiz.findById(playerId)
+        if (!quiz) throw new NotFoundError('quiz not found')
 
-        const { title, description } = quiz
+        const { players } = quiz
 
-        return {title, description}
+        debugger
+        for (i = 0; i < players.length; i++) {
+
+            if (players[i]._id.toString() === playerId) {
+                return quiz
+
+            }   
+        } 
+        throw new NotFoundError('player not found into this quiz. Contact to quizz administrator')
+    
+            
+
     })()
 }
