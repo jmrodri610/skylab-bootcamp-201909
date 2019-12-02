@@ -3,7 +3,7 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const { name, version } = require('./package.json')
-const { registerUser, authenticateUser, retrieveUser, createQuiz, startQuiz, enrollQuiz, retrieveQuiz, questionStarted, nextQuestion, retrieveQuestion, submitAnswer } = require('./logic')
+const { registerUser, authenticateUser, retrieveUser, createQuiz, startQuiz, enrollQuiz, retrieveQuiz, questionStarted, nextQuestion, retrieveQuestion, submitAnswer, enableQuestion, retrieveResults } = require('./logic')
 const jwt = require('jsonwebtoken')
 const { argv: [, , port], env: { SECRET, PORT = port || 8080, DB_URL } } = process
 const tokenVerifier = require('./helpers/token-verifier')(SECRET)
@@ -180,6 +180,29 @@ api.post('/play/question-check', jsonBodyParser, (req, res) => {
     }
 })
 
+api.post('/play/enable', jsonBodyParser, (req, res) => {
+    try {
+        const { body: { quizId } } = req
+
+        enableQuestion(quizId)
+            .then( () => res.end())
+            .catch(error => {
+                const { message } = error
+
+                if (error instanceof NotFoundError)
+                    return res.status(404).json({ message })
+                if (error instanceof ContentError)
+                    return res.status(409).json({ message })
+                if (error instanceof ConflictError)
+                    return res.status(403).json({ message })
+
+                res.status(500).json({ message })
+            })
+    } catch ({ message }) {
+        res.status(400).json({ message })
+    }
+})
+
 
 api.post('/play/next', tokenVerifier, jsonBodyParser, (req, res) => {
     try {
@@ -234,6 +257,28 @@ api.post('/play/submit-answer', jsonBodyParser, (req, res) => {
 
         submitAnswer(playerId, quizId, answers)
             .then(() => res.end())
+            .catch(error => {
+                const { message } = error
+
+                if (error instanceof NotFoundError)
+                    return res.status(404).json({ message })
+                if (error instanceof ContentError)
+                    return res.status(409).json({ message })
+                if (error instanceof ConflictError)
+                    return res.status(403).json({ message })
+
+                res.status(500).json({ message })
+            })
+    } catch ({ message }) {
+        res.status(400).json({ message })
+    }
+})
+
+api.get('/play/results', jsonBodyParser, (req, res) => {
+    try {
+        const { body: {playerId, quizId} } = req
+        retrieveResults(playerId, quizId)
+            .then(results => res.status(200).json(results))
             .catch(error => {
                 const { message } = error
 

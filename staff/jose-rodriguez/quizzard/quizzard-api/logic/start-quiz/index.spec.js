@@ -52,7 +52,6 @@ describe('logic - start quiz', () => {
 
         const quiz = await Quiz.create({owner: id, title, description, questions})
 
-        debugger
 
         quizId = quiz.id
 
