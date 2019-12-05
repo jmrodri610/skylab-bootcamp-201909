@@ -3,14 +3,22 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const { name, version } = require('./package.json')
-const { registerUser, authenticateUser, retrieveUser, createQuiz, startQuiz, enrollQuiz, retrieveQuiz, questionStarted, nextQuestion, retrieveQuestion, submitAnswer, enableQuestion, retrieveResults } = require('./logic')
+const { registerUser, authenticateUser, retrieveUser, createQuiz, startQuiz, enrollQuiz, retrieveQuiz, questionStarted, nextQuestion, retrieveQuestion, submitAnswer, enableQuestion, retrieveResults, listQuizs } = require('./logic')
 const jwt = require('jsonwebtoken')
+debugger
 const { argv: [, , port], env: { SECRET, PORT = port || 8080, DB_URL } } = process
+const cors = require('./utils/cors')
 const tokenVerifier = require('./helpers/token-verifier')(SECRET)
 const { errors: { NotFoundError, ConflictError, CredentialsError, ContentError } } = require('quizzard-util')
 const { database } = require('quizzard-data')
 
 const api = express()
+
+api.use(cors)
+
+api.options('*', cors, (req, res) => {
+    res.end()
+})
 
 const jsonBodyParser = bodyParser.json()
 
@@ -98,6 +106,27 @@ api.post('/create', tokenVerifier, jsonBodyParser, (req, res) => {
 
     }
 })
+
+api.get('/quizs', tokenVerifier, (req, res) => {
+    try {
+        const { id } = req
+        debugger
+        listQuizs(id)
+            .then(quizs => res.json(quizs))
+            .catch(error => {
+                const { message } = error
+                if (error instanceof NotFoundError)
+                    return res.status(404).json({ message })
+
+                res.status(500).json({ message })
+            })
+    } catch ({ message }) {
+        res.status(400).json({ message })
+
+    }
+})
+
+
 
 api.post('/start-quiz', jsonBodyParser, tokenVerifier, (req, res) => {
     try {
