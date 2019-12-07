@@ -1,0 +1,66 @@
+.lobby
+    animation: colorchange 20s infinite
+    font-family: 'Montserrat Alternates', sans-serif
+    display: flex
+    flex-direction: column
+    min-height: 100vh
+    width: 100vw
+    &__header
+        height: 15vh
+        display: flex
+        flex-direction: column
+        align-items: center
+        background-color: white
+    &__title
+        font-size: 1.3rem
+        margin-bottom: 0
+    &__gamepin
+        font-size: 1.7rem
+    &__info
+        color: white
+        display: flex
+        justify-content: space-around
+        align-items: center
+        margin-top: 1rem
+    &__counter
+        display: flex
+        flex-direction: column
+        align-items: center
+    &__numPlayers
+        margin-bottom: 0
+        font-size: 2rem
+        font-weight: bold
+        &--players
+            margin-top: 0
+    &__logo
+        font-size: 1.5rem
+    &__submit
+        font-size: 1rem
+    &__waiting
+        background-color: #1368ce
+        height: 14vh
+        display: flex
+        align-items: center
+        padding-left: 1rem
+        &--text
+            color: white
+            font-size: 1.3rem
+
+
+
+    
+
+
+
+@keyframes colorchange
+
+    0%  
+        background: #41c4de
+    25%  
+        background: #8cc73f
+    50%  
+        background: #f3d333
+    75% 
+        background: #f78e56
+    100%  
+        background: #41c4de
