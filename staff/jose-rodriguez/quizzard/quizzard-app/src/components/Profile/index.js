@@ -2,13 +2,21 @@ import React from 'react'
 import './index.sass'
 import ListQuiz from '../List-Quiz'
 
-export default function ({ user, email, userId, quizs, onCreate }) {
-    debugger
+export default function ({ user, email, userId, quizs, onCreate, onDetail }) {
     let quizzards
-    if (quizs) quizzards = quizs.map(quiz => {
-        if (quiz.owner === userId) return quiz.owner
-    })
-    debugger
+    let players = 0
+    let acc = 0 
+    if (quizs) {
+        quizzards = quizs.map(quiz => {
+            if (quiz.owner === userId) return quiz.owner
+        })
+
+        players = quizs.map(quiz => {
+            return quiz.players.length
+        })
+        players.forEach(x => acc += x)
+    }
+
     return <section className="profile">
         <div className="profile__header">
             <div className="profile__logo">Quizzard!</div>
@@ -30,7 +38,7 @@ export default function ({ user, email, userId, quizs, onCreate }) {
             </div>
             <div className="profile__quizinfo">
                 <p className="profile__quizs">Total Players</p>
-                <p className="profile__numquizs">6</p>
+                <p className="profile__numquizs">{quizs && acc}</p>
             </div>
         </div>
         <div className="profile__list">
@@ -40,7 +48,7 @@ export default function ({ user, email, userId, quizs, onCreate }) {
                     event.preventDefault(); onCreate()
                 }}>Create new</p>
             </div>
-            <ListQuiz quizs={quizs} user={user} />
+            <ListQuiz quizs={quizs} user={user} onDetail={onDetail} />
         </div>
 
     </section>
