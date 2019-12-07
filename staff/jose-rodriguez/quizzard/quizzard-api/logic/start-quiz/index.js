@@ -27,6 +27,6 @@ module.exports = function (id, quizId) {
 
         await quiz.save()
 
-        return quiz.id
+        return quiz
     })()
 }
