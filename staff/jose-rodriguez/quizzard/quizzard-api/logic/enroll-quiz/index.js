@@ -28,10 +28,8 @@ module.exports = function (quizId, nickname) {
             players.push(player)
 
             await quiz.save()
-
-            quiz = quiz.toObject()
             
-            return player.id
+            return quiz
 
 
         } else {

@@ -132,7 +132,7 @@ api.post('/start-quiz', jsonBodyParser, tokenVerifier, (req, res) => {
     try {
         const { id, body: { quizId } } = req
         startQuiz(id, quizId)
-            .then(pincode => res.status(201).json({ pincode }))
+            .then(quiz => res.status(201).json( quiz ))
             .catch(error => {
                 const { message } = error
                 if (error instanceof NotFoundError)
@@ -149,7 +149,7 @@ api.post('/enroll-quiz', jsonBodyParser, (req, res) => {
     try {
         const { body: { quizId, nickname } } = req
         enrollQuiz(quizId, nickname)
-            .then(playerId => res.status(201).json({ playerId }))
+            .then(quiz => res.status(201).json( quiz ))
             .catch(error => {
                 const { message } = error
                 if (error instanceof NotFoundError)
@@ -165,11 +165,10 @@ api.post('/enroll-quiz', jsonBodyParser, (req, res) => {
 
 api.post('/play', jsonBodyParser, (req, res) => {
     try {
-        const { body: { playerId, quizId } } = req
-        retrieveQuiz(playerId, quizId)
+        const { body: { quizId } } = req
+        retrieveQuiz(quizId)
             .then(quiz => {
-                const { title, description } = quiz
-                res.json({ title, description })
+                res.json(quiz)
             })
             .catch(error => {
                 const { message } = error
