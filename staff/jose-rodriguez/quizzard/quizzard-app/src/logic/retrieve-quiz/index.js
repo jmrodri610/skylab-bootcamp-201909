@@ -7,7 +7,7 @@ module.exports = function (quizId) {
     validate.string.notVoid('quizId', quizId)
 
     return (async () => {
-        debugger
+        
         const res = await call(`${API_URL}/play`, {
             method: 'POST',
             headers: {

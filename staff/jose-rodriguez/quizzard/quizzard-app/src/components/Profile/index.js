@@ -5,7 +5,9 @@ import ListQuiz from '../List-Quiz'
 export default function ({ user, email, userId, quizs, onCreate, onDetail }) {
     let quizzards
     let players = 0
-    let acc = 0 
+    let acc_players = 0 
+    let games = 0
+    let acc_games = 0
     if (quizs) {
         quizzards = quizs.map(quiz => {
             if (quiz.owner === userId) return quiz.owner
@@ -14,7 +16,13 @@ export default function ({ user, email, userId, quizs, onCreate, onDetail }) {
         players = quizs.map(quiz => {
             return quiz.players.length
         })
-        players.forEach(x => acc += x)
+        players.forEach(x => acc_players += x)
+        
+        games = quizs.map(quiz => {
+            return quiz.games
+        })
+        games.forEach(x => acc_games += x)
+
     }
 
     return <section className="profile">
@@ -34,11 +42,11 @@ export default function ({ user, email, userId, quizs, onCreate, onDetail }) {
             </div>
             <div className="profile__quizinfo">
                 <p className="profile__quizs">Plays of your Quizzards</p>
-                <p className="profile__numquizs">5</p>
+                <p className="profile__numquizs">{quizs && acc_games}</p>
             </div>
             <div className="profile__quizinfo">
                 <p className="profile__quizs">Total Players</p>
-                <p className="profile__numquizs">{quizs && acc}</p>
+                <p className="profile__numquizs">{quizs && acc_players}</p>
             </div>
         </div>
         <div className="profile__list">

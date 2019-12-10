@@ -1,0 +1,55 @@
+    
+.ready
+    animation: colorchange 20s infinite
+    font-family: 'Montserrat Alternates', sans-serif
+    display: flex
+    flex-direction: column
+    justify-content: center
+    min-height: 100vh
+    &__header
+        height: 15vh
+        display: flex
+        flex-direction: column
+        align-items: center
+        justify-content: center
+        background-color: white
+        position: fixed
+        top: 0
+        z-index: 10
+        width: 100vw
+    &__gamepin
+        font-size: 1.7rem
+    &__timer
+        display: flex
+        flex-direction: column
+        justify-content: space-around
+        align-items: center
+        height: 30vh
+        &__text
+            font-size: 2rem
+            color: white
+        &__sec
+            font-size: 4.5rem
+            color: white
+            animation: waiting 1s infinite
+
+
+
+@keyframes colorchange
+
+    0%  
+        background: #41c4de
+    25%  
+        background: #8cc73f
+    50%  
+        background: #f3d333
+    75% 
+        background: #f78e56
+    100%  
+        background: #41c4de
+
+@keyframes waiting 
+    from 
+        font-size: 6.5rem
+    to 
+        font-size: 0rem
