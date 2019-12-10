@@ -30,6 +30,11 @@ module.exports = new Schema({
         default: undefined
     },
 
+    games: {
+        type: Number,
+        default: 0
+    },
+
     players: [Player],
 
     questions: [Question]
