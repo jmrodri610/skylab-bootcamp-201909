@@ -25,11 +25,12 @@ module.exports = function (quizId, nickname) {
 
             const { players } = quiz
             const player = new Player({nickname})
+         
             players.push(player)
 
             await quiz.save()
             
-            return quiz
+            return { quiz, player: player._id }
 
 
         } else {

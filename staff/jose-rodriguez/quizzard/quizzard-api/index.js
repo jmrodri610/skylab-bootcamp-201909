@@ -187,10 +187,10 @@ api.post('/play', jsonBodyParser, (req, res) => {
 
 api.post('/play/question-check', jsonBodyParser, (req, res) => {
     try {
-        const { body: { playerId, quizId } } = req
+        const { body: { quizId } } = req
 
-        questionStarted(playerId, quizId)
-            .then(launched => res.status(200).json({ launched }))
+        questionStarted(quizId)
+            .then(launched => res.status(200).json(launched))
             .catch(error => {
                 const { message } = error
 
@@ -213,7 +213,7 @@ api.post('/play/enable', jsonBodyParser, (req, res) => {
         const { body: { quizId } } = req
 
         enableQuestion(quizId)
-            .then( () => res.end())
+            .then( (quiz) => res.status(200).json(quiz))
             .catch(error => {
                 const { message } = error
 
@@ -232,11 +232,11 @@ api.post('/play/enable', jsonBodyParser, (req, res) => {
 })
 
 
-api.post('/play/next', tokenVerifier, jsonBodyParser, (req, res) => {
+api.post('/play/next', jsonBodyParser, (req, res) => {
     try {
-        const { id, body: { quizId } } = req
+        const {  body: { quizId } } = req
 
-        nextQuestion(id, quizId)
+        nextQuestion(quizId)
             .then(() => res.end())
             .catch(error => {
                 const { message } = error
@@ -261,7 +261,7 @@ api.post('/play/question', jsonBodyParser, (req, res) => {
         const { body: { playerId, quizId } } = req
 
         retrieveQuestion(playerId, quizId)
-            .then(question => res.status(200).json({ question }))
+            .then(question => res.status(200).json(question))
             .catch(error => {
                 const { message } = error
 
