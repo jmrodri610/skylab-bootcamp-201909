@@ -25,6 +25,8 @@ module.exports = function (id, quizId) {
 
         quiz.currentQuestion = 0
 
+        quiz.games ++
+
         await quiz.save()
 
         return quiz
