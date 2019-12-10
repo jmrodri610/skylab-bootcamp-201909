@@ -6,5 +6,9 @@ module.exports = {
     listQuizs: require('./list-quizs'),
     createQuiz: require('./create-quiz'),
     startQuiz: require('./start-quiz'),
-    enrollGame: require('./enroll-quiz')
+    enrollGame: require('./enroll-quiz'),
+    enableQuestion: require('./enableQuestion'),
+    hasbeenlaunched: require('./has-been-launched'),
+    retrieveQuestion: require('./retrieve-question'),
+    nextQuestion: require('./next-question')
 }

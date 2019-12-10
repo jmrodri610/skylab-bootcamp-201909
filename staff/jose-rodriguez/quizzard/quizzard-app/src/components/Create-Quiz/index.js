@@ -8,7 +8,7 @@ export default function ({onCreate}) {
     return <section className="create">
         
         <form className="create__form" onSubmit={event => {
-            debugger
+            
             event.preventDefault();
             const {title: {value: title}, description: {value: description}} = event.target
 
@@ -28,7 +28,7 @@ export default function ({onCreate}) {
         </form>
 
         <form className="create__question" onSubmit={event => {
-            debugger
+            
             event.preventDefault();
 
             const {

@@ -8,8 +8,13 @@ import Profile from '../Profile'
 import CreateQuiz from '../Create-Quiz'
 import Detail from '../Detail'
 import Lobby from '../Lobby'
+import PlayerLobby from '../Player-Lobby'
+import WaitingArea from '../Waiting-Area'
+import Question from '../Question'
+import Admin from '../Admin'
 import { Route, withRouter, Redirect } from 'react-router-dom'
-import { authenticateUser, registerUser, retrieveUser, listQuizs, createQuiz, retrieveQuiz, startQuiz, enrollGame } from '../../logic'
+import { authenticateUser, registerUser, retrieveUser, listQuizs, createQuiz, retrieveQuiz, startQuiz, enrollGame, retrieveQuestion, nextQuestion } from '../../logic'
+
 
 export default withRouter(function ({ history }) {
 
@@ -20,6 +25,8 @@ export default withRouter(function ({ history }) {
   const [quiz, setQuiz] = useState()
   const [player, setPlayer] = useState()
   const [quizId, setQuizId] = useState()
+  const [timer, setTimer] = useState()
+  const [currentQuestion, setCurrentQuestion] = useState()
 
 
 
@@ -47,8 +54,8 @@ export default withRouter(function ({ history }) {
   }
 
   async function handleStartGame() {
-debugger
-    const {token} = sessionStorage
+    
+    const { token } = sessionStorage
 
     const quizId = history.location.pathname.slice(6)
 
@@ -60,10 +67,18 @@ debugger
   }
 
   async function handleEnrollGame(quizId, nickname) {
-debugger
+    
     const quiz = await enrollGame(quizId, nickname)
 
     setQuiz(quiz)
+
+    const playerId = quiz.player
+
+    debugger
+
+    sessionStorage.playerId = playerId
+
+    // history.push('/instructions')
 
     history.push(`/lobby/${quizId}`)
   }
@@ -82,7 +97,7 @@ debugger
 
   function handleGoToDetail(id) {
     history.push(`/quiz/${id}`)
-  
+
     setQuizId(id)
   }
 
@@ -127,6 +142,57 @@ debugger
 
   }
 
+  async function handleGoToQuestion (quizId) {
+
+    const quiz = await retrieveQuiz(quizId)
+    const {currentQuestion} = quiz
+    setQuiz(quiz)
+    setCurrentQuestion(currentQuestion)
+    //const questionId = questions[currentQuestion]._id
+    
+    if (token) {
+      history.push(`/admin/${quizId}`)
+    } else {
+      const { playerId } = sessionStorage
+      const question = await retrieveQuestion(playerId, quizId)
+      const timer = question.timing_
+      setTimer(timer)
+      history.push(`/waiting/${quizId}`)
+      setTimeout(function () { return history.push(`/game/${quizId}`) }, 5000)
+    }
+
+
+  }
+
+  async function handleNextQuestion (quizId) {
+
+    // debugger
+
+    // const { token } = sessionStorage
+
+    // await nextQuestion(token, quizId)
+
+    history.push(`/lobby/${quizId}`)
+
+  }
+
+  async function handleGoToResults (quizId) {
+
+    debugger
+
+    await nextQuestion(quizId)
+
+  
+    history.push(`/results/${quizId}`)
+
+
+    setTimeout(function () { return history.push(`/lobby/${quizId}`) }, 5000)
+
+    
+  }
+
+  
+
 
 
   const { token } = sessionStorage
@@ -140,7 +206,10 @@ debugger
     <Route path="/profile" render={() => token ? <Profile user={username} email={email} userId={id} quizs={quizs} onCreate={handleGoToCreate} onDetail={handleGoToDetail} /> : <Redirect to="/" />} />
     <Route path="/create" render={() => true ? <CreateQuiz onCreate={handleCreate} /> : <Redirect to="/" />} />
     <Route path="/quiz" render={() => token ? <Detail onStart={handleStartGame} /> : <Redirect to="/" />} />
-    <Route path="/lobby/:id" render={props => <Lobby quiz={quiz} quizId={props.match.params.id} />} />
-    
+    <Route path="/lobby/:id" render={props => <Lobby quiz={quiz} quizId={props.match.params.id} handleGoToQuestion={handleGoToQuestion} />} />
+    <Route path="/instructions" render ={()=> <PlayerLobby quiz={quiz} />} />
+    <Route path="/waiting/:id" render={props => <WaitingArea quiz={quiz} quizId={props.match.params.id} />} />
+    <Route path="/game/:id" render={props => <Question quizId={props.match.params.id} timer={timer} goToResults={handleGoToResults} />} />
+    <Route path="/admin/:id" render={props=> <Admin currentQuestion={currentQuestion} quizId={props.match.params.id} nextQuestion={handleNextQuestion} />} />
   </>
 })
