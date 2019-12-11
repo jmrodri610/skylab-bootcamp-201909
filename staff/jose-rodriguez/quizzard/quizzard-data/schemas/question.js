@@ -26,7 +26,7 @@ module.exports = new Schema({
     status: {
         type: String,
         enum: ['started', 'finished'],
-        default: undefined
+        default: 'finished'
     },
 
     startTime: Date

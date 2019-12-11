@@ -27,7 +27,7 @@ module.exports = new Schema({
 
     currentQuestion: {
         type: Number,
-        default: undefined
+        default: -1
     },
 
     games: {
