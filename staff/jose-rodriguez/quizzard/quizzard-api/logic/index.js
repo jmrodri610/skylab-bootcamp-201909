@@ -13,5 +13,6 @@ module.exports = {
     modifyQuiz: require('./modify-quiz'),
     listQuizs: require('./list-quizs'),
     submitAnswer: require('./submit-answer'),
-    retrieveResults: require('./retrieve-results')
+    retrieveResults: require('./retrieve-results'),
+    disableQuestion: require('./disable-question')
 }   

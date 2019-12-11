@@ -7,17 +7,19 @@ module.exports = function (quizId) {
     validate.string.notVoid('quizId', quizId)
     if (!ObjectId.isValid(quizId)) throw new ContentError(`${quizId} is not a valid id`)
 
-
-
-
     return (async () => {
-
-        let quiz = await Quiz.findById(quizId).lean()
+        let quiz = await Quiz.findById(quizId)
 
         if (!quiz) throw new NotFoundError('quiz not found')
 
-        return quiz
-          
+
+        let { questions, currentQuestion } = quiz
+
+        questions[currentQuestion].status = 'finished'
+
+        await quiz.save()
+
+        
 
     })()
 }
