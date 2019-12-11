@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { Route, withRouter, Redirect } from 'react-router-dom'
+
 import './index.sass'
 import Landing from '../Landing'
 import Home from '../Home'
@@ -13,8 +15,15 @@ import WaitingArea from '../Waiting-Area'
 import Question from '../Question'
 import Admin from '../Admin'
 import Results from '../Results'
-import { Route, withRouter, Redirect } from 'react-router-dom'
-import { authenticateUser, registerUser, retrieveUser, listQuizs, createQuiz, retrieveQuiz, startQuiz, enrollGame, retrieveQuestion, nextQuestion, disableQuestion, submitAnswers, retrieveResults } from '../../logic'
+import GameOver from '../GameOver'
+import Feedback from '../Feedback'
+import Context from '../Context'
+
+import {
+  authenticateUser, registerUser,
+  retrieveUser, listQuizs, createQuiz, retrieveQuiz, startQuiz,
+  enrollGame, retrieveQuestion, nextQuestion, disableQuestion
+} from '../../logic'
 
 
 export default withRouter(function ({ history }) {
@@ -28,6 +37,7 @@ export default withRouter(function ({ history }) {
   const [quizId, setQuizId] = useState()
   const [timer, setTimer] = useState()
   const [currentQuestion, setCurrentQuestion] = useState()
+  const [feed, setFeed] = useState()
 
   useEffect(() => {
     const { token } = sessionStorage;
@@ -53,7 +63,7 @@ export default withRouter(function ({ history }) {
   }
 
   async function handleStartGame() {
-    
+
     const { token } = sessionStorage
 
     const quizId = history.location.pathname.slice(6)
@@ -66,7 +76,7 @@ export default withRouter(function ({ history }) {
   }
 
   async function handleEnrollGame(quizId, nickname) {
-    
+
     const quiz = await enrollGame(quizId, nickname)
 
     setQuiz(quiz)
@@ -91,6 +101,8 @@ export default withRouter(function ({ history }) {
   function handleGoBack() { history.push('/home') }
 
   function handleGoToCreate() { history.push('/create') }
+
+  function handleGoEnd() { history.push('/gameover') }
 
   function handleGoToDetail(id) {
     history.push(`/quiz/${id}`)
@@ -139,14 +151,14 @@ export default withRouter(function ({ history }) {
 
   }
 
-  async function handleGoToQuestion (quizId) {
+  async function handleGoToQuestion(quizId) {
 
     const quiz = await retrieveQuiz(quizId)
-    const {currentQuestion} = quiz
+    const { currentQuestion } = quiz
     setQuiz(quiz)
     setCurrentQuestion(currentQuestion)
     //const questionId = questions[currentQuestion]._id
-    
+
     if (token) {
       history.push(`/admin/${quizId}`)
     } else {
@@ -161,7 +173,7 @@ export default withRouter(function ({ history }) {
 
   }
 
-  async function handleNextQuestion (quizId) {
+  async function handleNextQuestion(quizId) {
 
     await disableQuestion(quizId)
 
@@ -177,7 +189,7 @@ export default withRouter(function ({ history }) {
     history.push(`/results/${quizId}`)
   }
 
-  async function handleGoToResults (quizId, results) {
+  async function handleGoToResults(quizId, results) {
 
     debugger
 
@@ -188,25 +200,29 @@ export default withRouter(function ({ history }) {
 
     setTimeout(function () { return history.push(`/lobby/${quizId}`) }, 10000)
 
-    
+
   }
 
   const { token } = sessionStorage
 
 
   return <>
-    <Route exact path="/" render={() => token ? <Redirect to="/profile" /> : <Landing onHome={handleGoToHome} onPinCode={handleEnrollGame} />} />
-    <Route path="/home" render={() => <Home onLanding={handleGoToLanding} onRegister={handleGoToRegister} onLogin={handleGoToLogin} />} />
-    <Route path="/register" render={() => token ? <Redirect to="/profile" /> : <Register onRegister={handleRegister} onBack={handleGoBack} onLogin={handleGoToLogin} />} />
-    <Route path="/login" render={() => token ? <Redirect to="/profile" /> : <Login onLogin={handleLogin} onBack={handleGoBack} onRegister={handleGoToRegister} />} />
-    <Route path="/profile" render={() => token ? <Profile user={username} email={email} userId={id} quizs={quizs} onCreate={handleGoToCreate} onDetail={handleGoToDetail} /> : <Redirect to="/" />} />
-    <Route path="/create" render={() => true ? <CreateQuiz onCreate={handleCreate} /> : <Redirect to="/" />} />
-    <Route path="/quiz" render={() => token ? <Detail onStart={handleStartGame} /> : <Redirect to="/" />} />
-    <Route path="/lobby/:id" render={props => <Lobby quiz={quiz} quizId={props.match.params.id} handleGoToQuestion={handleGoToQuestion} />} />
-    <Route path="/instructions" render ={()=> <PlayerLobby quiz={quiz} />} />
-    <Route path="/waiting/:id" render={props => <WaitingArea quiz={quiz} quizId={props.match.params.id} />} />
-    <Route path="/game/:id" render={props => <Question quizId={props.match.params.id} timer={timer} goToResults={handleGoToResults} showResults={handleShowResults} />} />
-    <Route path="/admin/:id" render={props=> <Admin currentQuestion={currentQuestion} quizId={props.match.params.id} nextQuestion={handleNextQuestion} />} />
-    <Route path="/results/:id" render={props=> <Results quizId={props.match.params.id} results={results} /> } />
+    <Context.Provider value={{ feed, setFeed }}>
+      <Route exact path="/" render={() => token ? <Redirect to="/profile" /> : <Landing onHome={handleGoToHome} onPinCode={handleEnrollGame} />} />
+      <Route path="/home" render={() => <Home onLanding={handleGoToLanding} onRegister={handleGoToRegister} onLogin={handleGoToLogin} />} />
+      <Route path="/register" render={() => token ? <Redirect to="/profile" /> : <Register onRegister={handleRegister} onBack={handleGoBack} onLogin={handleGoToLogin} />} />
+      <Route path="/login" render={() => token ? <Redirect to="/profile" /> : <Login onLogin={handleLogin} onBack={handleGoBack} onRegister={handleGoToRegister} />} />
+      <Route path="/profile" render={() => token ? <Profile user={username} email={email} userId={id} quizs={quizs} onCreate={handleGoToCreate} onDetail={handleGoToDetail} /> : <Redirect to="/" />} />
+      <Route path="/create" render={() => true ? <CreateQuiz onCreate={handleCreate} /> : <Redirect to="/" />} />
+      <Route path="/quiz" render={() => token ? <Detail onStart={handleStartGame} /> : <Redirect to="/" />} />
+      <Route path="/lobby/:id" render={props => <Lobby quiz={quiz} quizId={props.match.params.id} handleGoToQuestion={handleGoToQuestion} goEnd={handleGoEnd} />} />
+      <Route path="/instructions" render={() => <PlayerLobby quiz={quiz} />} />
+      <Route path="/waiting/:id" render={props => <WaitingArea quiz={quiz} quizId={props.match.params.id} />} />
+      <Route path="/game/:id" render={props => <Question quizId={props.match.params.id} timer={timer} goToResults={handleGoToResults} showResults={handleShowResults} />} />
+      <Route path="/admin/:id" render={props => <Admin currentQuestion={currentQuestion} quizId={props.match.params.id} nextQuestion={handleNextQuestion} />} />
+      <Route path="/results/:id" render={props => <Results quizId={props.match.params.id} results={results} />} />
+      <Route path="/gameover" render={() => <GameOver onBack={handleGoToLanding} />} />
+      {feed && <Feedback title={feed.title} message={feed.message} />}
+    </Context.Provider>
   </>
 })

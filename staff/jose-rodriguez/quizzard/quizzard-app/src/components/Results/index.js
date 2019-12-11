@@ -3,18 +3,16 @@ import './index.sass'
 
 export default function ({results}) {
 
-    debugger
-
     const {validAnswers, players_} = results
 
     players_ && players_.sort(function(a,b) {return b.score-a.score})
 
     return  <section className="results">
     <div className="results__header">
-        <p className="results__title">results title</p>
+        <p className="results__title">Quizzard!</p>
     </div>
     <div className="results__answer">
-        <p className="results__answer--text">The correct answer is {validAnswers}</p>
+        <p className="results__answer--text">The Answer is: {validAnswers.split(",")}</p>
     </div>
 
     <div className="results__podium">
@@ -38,7 +36,7 @@ export default function ({results}) {
         </div>
     </div>
     <div className="results__footer">
-        <p className="results__footer--text">PIN CODE: 654321</p>
+        <p className="results__footer--text">Create your own Quizzard! at quizzard.com</p>
     </div>
 </section>
 

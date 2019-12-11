@@ -16,7 +16,7 @@ export default function ({ quizId }) {
 
     return <section className="ready">
         <header className="ready__header">
-            <p className="ready__gamepin">Game PIN: {quizId}</p>
+            <p className="ready__gamepin">Game PIN: {quizId.slice(0,6)}</p>
         </header>
         <div className="ready__timer">
             <div className="ready__timer__text">Are you ready?</div>

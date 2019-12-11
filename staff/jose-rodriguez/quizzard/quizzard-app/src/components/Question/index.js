@@ -8,6 +8,7 @@ export default function ({ quizId, goToResults, showResults }) {
     const [question, setQuestion] = useState()
     let [counter, setCounter] = useState()
     let [answers, setAnswers] = useState([])
+    let [answereds, setAnswered] = useState([false,false, false, false])
     
 
     let interval
@@ -67,27 +68,32 @@ export default function ({ quizId, goToResults, showResults }) {
     }, [setQuestion, counter])
 
     function selectAnswer1() {
-        const id = question.answer[0].id
-        answers.push(id)
-        setAnswers(answers)
+            const id = question.answer[0].id
+            answers.push(id)
+            setAnswers(answers)
+            setAnswered([true, answereds[1], answereds[2], answereds[3]])
+        
     }
 
     function selectAnswer2() {
         const id = question.answer[1].id
         answers.push(id)
         setAnswers(answers)
+        setAnswered([answereds[0], true, answereds[2], answereds[3]])
     }
 
     function selectAnswer3() {
         const id = question.answer[2].id
         answers.push(id)
         setAnswers(answers)
+        setAnswered([answereds[0], answereds[1], true, answereds[3]])
     }
 
     function selectAnswer4() {
         const id = question.answer[3].id
         answers.push(id)
         setAnswers(answers)
+        setAnswered([answereds[0], answereds[1], answereds[2], true])
     }
 
 
@@ -96,44 +102,59 @@ export default function ({ quizId, goToResults, showResults }) {
         <div className="session__header">
             <p className="session__title">{question && question.text_}</p>
         </div>
-        <div className="session__next">
-            <p className="session__next--text">Next</p>
-        </div>
+
         <div className="session__timer">
             <p className="session__timer--sec">{counter}</p>
         </div>
         <div className="session__control">
             <div className="session__answers">
-
-                <div className="session__answer session__answer--text session__answer--1" onClick={event => {
+    
+                {answereds[0] ? <div className="session__answer session__answer--text session__answer--answered">
+                                    <p className="session__answer--text" >{question && question.answer[0].text}</p>
+                                </div>
+                    :
+                    <div className="session__answer session__answer--text session__answer--1" onClick={event => {
                     event.preventDefault();
                     selectAnswer1()
                 }} >
                     <p className="session__answer--text" >{question && question.answer[0].text}</p>
-                </div>
-                <div className="session__answer session__answer--text session__answer--2" onClick={event => {
+                </div>}
+
+                {answereds[1] ? <div className="session__answer session__answer--text session__answer--answered">
+                                    <p className="session__answer--text" >{question && question.answer[1].text}</p>
+                                </div>
+                    :
+                    <div className="session__answer session__answer--text session__answer--2" onClick={event => {
                     event.preventDefault();
                     selectAnswer2()
-                }}>
+                }} >
                     <p className="session__answer--text" >{question && question.answer[1].text}</p>
-                </div>
-                <div className="session__answer session__answer--text session__answer--3" onClick={event => {
+                </div>}
+                {answereds[2] ? <div className="session__answer session__answer--text session__answer--answered">
+                                    <p className="session__answer--text" >{question && question.answer[2].text}</p>
+                                </div>
+                    :
+                    <div className="session__answer session__answer--text session__answer--3" onClick={event => {
                     event.preventDefault();
                     selectAnswer3()
-                }}>
+                }} >
                     <p className="session__answer--text" >{question && question.answer[2].text}</p>
-                </div>
-                <div className="session__answer session__answer--text session__answer--4" onClick={event => {
+                </div>}
+                {answereds[3] ? <div className="session__answer session__answer--text session__answer--answered">
+                                    <p className="session__answer--text" >{question && question.answer[3].text}</p>
+                                </div>
+                    :
+                    <div className="session__answer session__answer--text session__answer--4" onClick={event => {
                     event.preventDefault();
                     selectAnswer4()
-                }}>
+                }} >
                     <p className="session__answer--text" >{question && question.answer[3].text}</p>
-                </div>
+                </div>}
 
             </div>
         </div>
         <div className="session__footer">
-            <p className="session__footer--text">PIN CODE: {quizId}</p>
+            <p className="session__footer--text">Create your own Quizzard at Quizzard.com</p>
         </div>
 
     </section>

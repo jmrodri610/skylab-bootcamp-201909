@@ -5,7 +5,7 @@ import Question from '../Question'
 import { retrieveQuiz, enableQuestion, hasbeenlaunched } from '../../logic'
 
 
-export default function ({ quizId, handleGoToQuestion }) {
+export default function ({ quizId, handleGoToQuestion, goEnd }) {
     const { token } = sessionStorage
 
     const [quiz, setQuiz] = useState()
@@ -19,6 +19,10 @@ export default function ({ quizId, handleGoToQuestion }) {
                 try {
                     const quiz = await retrieveQuiz(quizId)
                     setQuiz(quiz)
+
+                    if(quiz.currentQuestion >=quiz.questions.length) {
+                        goEnd()
+                    }
 
 
                     const launched = await hasbeenlaunched(quizId)
@@ -58,8 +62,7 @@ export default function ({ quizId, handleGoToQuestion }) {
         {quiz && <>
 
             <header className="lobby__header">
-                <h2 className="lobby__title">Join at quizzard.com with</h2>
-                <p className="lobby__gamepin">Game PIN: {quizId}</p>
+                <h2 className="lobby__gamepin">Quizzard: {quiz && quiz.title}</h2>
             </header>
             <div className="lobby__info">
                 <div className="lobby__counter">

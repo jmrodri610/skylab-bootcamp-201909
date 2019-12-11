@@ -81,19 +81,23 @@ export default function ({onCreate}) {
             <div className="question__answers">
                 <div className="question__answers--container">
                     <input className="question__answers--1" type="text" placeholder="answer 1" name="answer1"></input>
-                    <input type="checkbox" name="check1"></input>
+                    <input type="checkbox" name="check1" id="checkbox 1"></input>
+                    <label for="checkbox 1"><span>√</span></label>
                 </div>
                 <div className="question__answers--container">
                     <input className="question__answers--2" type="text" placeholder="answer 2" name="answer2"></input>
-                    <input type="checkbox" name="check2"></input>
+                    <input type="checkbox" name="check2" id="checkbox 2"></input>
+                    <label for="checkbox 2"><span>√</span></label>
                 </div>
                 <div className="question__answers--container">
                     <input className="question__answers--3" type="text" placeholder="answer 3" name="answer3"></input>
-                    <input type="checkbox" name="check3"></input>
+                    <input type="checkbox" name="check3" id="checkbox 3"></input>
+                    <label for="checkbox 3"><span>√</span></label>
                 </div>
                 <div className="question__answers--container">
                     <input className="question__answers--4" type="text" placeholder="answer 4" name="answer4"></input>
-                    <input type="checkbox" name="check4"></input>
+                    <input type="checkbox" name="check4" id="checkbox 4"></input>
+                    <label for="checkbox 4"><span>√</span></label>
                 </div>
             </div>
             <input type="submit" className="question__add" value="Add Question"></input>

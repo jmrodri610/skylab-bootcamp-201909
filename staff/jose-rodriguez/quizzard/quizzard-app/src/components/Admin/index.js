@@ -47,17 +47,12 @@ export default function ({ currentQuestion, quizId, nextQuestion }) {
 
     return <section className="instructions">
         <header className="instructions__header">
-            <p className="instructions__gamepin">Game PIN: {quizId}</p>
+            <p className="instructions__gamepin">{quiz && quiz.title}</p>
         </header>
         <div className="instructions__joinArea">
             <div className="instructions__text">Current Question running</div>
             <div className="instructions__name">{currentQuestion + 1}</div>
-            <div className="instructions__next" onClick={event => {
-                event.preventDefault();
-                nextQuestion(quizId)
-            }}>
-                <p className="instructions__next--text">Next Question</p>
-            </div>
+  
         </div>
     </section>
 
