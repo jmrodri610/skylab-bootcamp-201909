@@ -1,0 +1,87 @@
+.results
+    min-height: 100vh
+    display: flex
+    flex-direction: column
+    justify-content: center
+    font-family: 'Montserrat Alternates', sans-serif
+    background-color: #461790
+    &__header
+        height: 15vh
+        display: flex
+        flex-direction: column
+        align-items: center
+        justify-content: center
+        background-color: white
+        position: fixed
+        top: 0
+        z-index: 0
+        width: 100vw
+    &__title
+        font-size: 2rem
+    &__container
+        display: flex
+        flex-direction: column
+        align-items: center
+    &__answer
+        position: fixed
+        top: 10vh
+        z-index: 1000
+        &--text
+            color: white
+            font-size: 2rem
+            text-align: center
+    &__player
+        max-width: 25vw
+        animation-name: appear
+        animation-duration: 3s
+        animation-timing-function: ease-out
+        animation-fill-mode: forwards
+    &__podium 
+        color: whitesmoke
+        display: flex
+        justify-content: center
+        align-items: flex-end
+        font-size: 1.2rem
+        &--3
+            width: 25vw
+            height: 20vh
+            background-color: #CC9904
+            margin-left: 0.5rem
+            box-shadow: 0 0 5px 2px #CC9904
+        &--1
+            width: 25vw
+            height: 35vh
+            background-color: gold
+            box-shadow: 0 0 5px 3px gold
+            z-index: 100
+        &--2
+            width: 25vw
+            height: 25vh
+            background-color: silver
+            margin-right: 0.5rem
+            box-shadow: 0 0 4px 5px #8a8383
+        &--text
+            font-size: 3rem
+            display: flex
+            justify-content: center
+            align-items: center
+    &__footer
+        background-color: white
+        position: fixed
+        bottom: 0
+        z-index: 1000
+        height: 10vh
+        display: flex
+        align-items: center
+        padding-left: 1rem
+        &--text
+            color: black
+            font-size: 1.3rem
+            width: 100vw
+
+@keyframes appear
+    from
+        font-size: 0%
+        
+    to
+        font-size: 100%
