@@ -10,5 +10,8 @@ module.exports = {
     enableQuestion: require('./enableQuestion'),
     hasbeenlaunched: require('./has-been-launched'),
     retrieveQuestion: require('./retrieve-question'),
-    nextQuestion: require('./next-question')
+    nextQuestion: require('./next-question'),
+    disableQuestion: require('./disable-question'),
+    submitAnswers: require('./submit-answer'),
+    retrieveResults: require('./retrieve-results')
 }

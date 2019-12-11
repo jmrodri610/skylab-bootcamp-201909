@@ -12,8 +12,9 @@ import PlayerLobby from '../Player-Lobby'
 import WaitingArea from '../Waiting-Area'
 import Question from '../Question'
 import Admin from '../Admin'
+import Results from '../Results'
 import { Route, withRouter, Redirect } from 'react-router-dom'
-import { authenticateUser, registerUser, retrieveUser, listQuizs, createQuiz, retrieveQuiz, startQuiz, enrollGame, retrieveQuestion, nextQuestion } from '../../logic'
+import { authenticateUser, registerUser, retrieveUser, listQuizs, createQuiz, retrieveQuiz, startQuiz, enrollGame, retrieveQuestion, nextQuestion, disableQuestion, submitAnswers, retrieveResults } from '../../logic'
 
 
 export default withRouter(function ({ history }) {
@@ -23,12 +24,10 @@ export default withRouter(function ({ history }) {
   const [id, setId] = useState()
   const [quizs, setQuizs] = useState()
   const [quiz, setQuiz] = useState()
-  const [player, setPlayer] = useState()
+  const [results, setResults] = useState()
   const [quizId, setQuizId] = useState()
   const [timer, setTimer] = useState()
   const [currentQuestion, setCurrentQuestion] = useState()
-
-
 
   useEffect(() => {
     const { token } = sessionStorage;
@@ -73,8 +72,6 @@ export default withRouter(function ({ history }) {
     setQuiz(quiz)
 
     const playerId = quiz.player
-
-    debugger
 
     sessionStorage.playerId = playerId
 
@@ -166,34 +163,33 @@ export default withRouter(function ({ history }) {
 
   async function handleNextQuestion (quizId) {
 
-    // debugger
+    await disableQuestion(quizId)
 
-    // const { token } = sessionStorage
-
-    // await nextQuestion(token, quizId)
+    setTimeout(async function () { await nextQuestion(quizId) }, 3000)
+    //await nextQuestion(quizId)
 
     history.push(`/lobby/${quizId}`)
 
   }
 
-  async function handleGoToResults (quizId) {
+  function handleShowResults(quizId) {
+
+    history.push(`/results/${quizId}`)
+  }
+
+  async function handleGoToResults (quizId, results) {
 
     debugger
 
-    await nextQuestion(quizId)
+    setResults(results)
 
-  
     history.push(`/results/${quizId}`)
 
 
-    setTimeout(function () { return history.push(`/lobby/${quizId}`) }, 5000)
+    setTimeout(function () { return history.push(`/lobby/${quizId}`) }, 10000)
 
     
   }
-
-  
-
-
 
   const { token } = sessionStorage
 
@@ -209,7 +205,8 @@ export default withRouter(function ({ history }) {
     <Route path="/lobby/:id" render={props => <Lobby quiz={quiz} quizId={props.match.params.id} handleGoToQuestion={handleGoToQuestion} />} />
     <Route path="/instructions" render ={()=> <PlayerLobby quiz={quiz} />} />
     <Route path="/waiting/:id" render={props => <WaitingArea quiz={quiz} quizId={props.match.params.id} />} />
-    <Route path="/game/:id" render={props => <Question quizId={props.match.params.id} timer={timer} goToResults={handleGoToResults} />} />
+    <Route path="/game/:id" render={props => <Question quizId={props.match.params.id} timer={timer} goToResults={handleGoToResults} showResults={handleShowResults} />} />
     <Route path="/admin/:id" render={props=> <Admin currentQuestion={currentQuestion} quizId={props.match.params.id} nextQuestion={handleNextQuestion} />} />
+    <Route path="/results/:id" render={props=> <Results quizId={props.match.params.id} results={results} /> } />
   </>
 })

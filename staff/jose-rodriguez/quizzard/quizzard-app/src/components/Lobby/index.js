@@ -43,11 +43,10 @@ export default function ({ quizId, handleGoToQuestion }) {
     async function handleEnableQuestion(quizId) {
 
         try {
+            
             const quiz = await enableQuestion(quizId)
 
             setQuiz(quiz)
-
-            debugger
 
         } catch (error) {
             console.error(error)
@@ -59,7 +58,7 @@ export default function ({ quizId, handleGoToQuestion }) {
         {quiz && <>
 
             <header className="lobby__header">
-                <h2 className="lobby__title">Join at quizzard.com/lobby with</h2>
+                <h2 className="lobby__title">Join at quizzard.com with</h2>
                 <p className="lobby__gamepin">Game PIN: {quizId}</p>
             </header>
             <div className="lobby__info">
@@ -73,7 +72,7 @@ export default function ({ quizId, handleGoToQuestion }) {
                         event.preventDefault();
                         handleEnableQuestion(quizId)
                     }}>
-                        <input type="submit" className="lobby__submit" value="Start"></input>
+                        { token && <input type="submit" className="lobby__submit" value="Next"></input>}
                     </form>
                 </div>
             </div>
