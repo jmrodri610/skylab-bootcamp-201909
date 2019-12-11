@@ -21,7 +21,7 @@ module.exports = function (quizId) {
 
 
         const { currentQuestion, questions } = quiz
-        debugger
+        
         if (currentQuestion >= questions.length) throw new ConflictError('Question not found, please contact to the administrator')
         if (questions[currentQuestion].status === 'started') {
             return true
@@ -29,12 +29,6 @@ module.exports = function (quizId) {
             return false
         }
 
-        // const { players } = quiz
-        // debugger
-        // for (i = 0; i < players.length; i++) {
-        // if (players[i]._id.toString() === playerId) {
-        // }    
-
-     throw new NotFoundError('player not found into this quiz. Contact to quizz administrator')
+        
 }) ()
 }

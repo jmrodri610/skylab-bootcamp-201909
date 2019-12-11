@@ -15,6 +15,7 @@ module.exports = function (playerId, quizId) {
     return (async () => {
 
         let quiz = await Quiz.findById(quizId).lean()
+        
 
         if (!quiz) throw new NotFoundError('quiz not found')
 
@@ -29,7 +30,8 @@ module.exports = function (playerId, quizId) {
                 question = questions[currentQuestion]
 
                 const {text: text_, answers: answers_, score: score_, timing: timing_} = question
-                let answer = answers_.map(answer => { return answer.text })
+                let answer = answers_.map(answer => { 
+                    return {text: answer.text, id: answer._id} })
                 
                 const retrieveQuestion = {text_, answer, score_, timing_}
                     

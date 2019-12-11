@@ -20,7 +20,7 @@ module.exports = function (id) {
 
             quiz.owner = id
         })
-        debugger
+        
         return quizs
     })()
 }
