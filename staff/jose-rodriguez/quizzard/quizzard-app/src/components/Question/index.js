@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import './index.sass'
 import { retrieveQuestion, retrieveQuiz, submitAnswers, retrieveResults } from '../../logic'
+import Context from '../Context'
 
 
-export default function ({ quizId, goToResults, showResults }) {
+export default function ({ quizId, goToResults }) {
 
     const [question, setQuestion] = useState()
     let [counter, setCounter] = useState()
     let [answers, setAnswers] = useState([])
     let [answereds, setAnswered] = useState([false, false, false, false])
+
+    const {feed, setFeed} = useContext(Context)
 
 
     let interval
@@ -42,15 +45,14 @@ export default function ({ quizId, goToResults, showResults }) {
 
                         await submitAnswers(playerId, quizId, answers)
 
-                        const results = await retrieveResults(playerId, quizId)
-
-                        goToResults(quizId, results)
+                        
+                        goToResults(quizId)
 
                     }
 
 
-                } catch (error) {
-                    console.log(error)
+                } catch ({message}) {
+                    setFeed({title: "Oops!", message })
                 }
             })()
 

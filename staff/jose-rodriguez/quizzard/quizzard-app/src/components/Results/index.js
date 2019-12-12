@@ -12,7 +12,7 @@ export default function ({results}) {
         <p className="results__title">Quizzard!</p>
     </div>
     <div className="results__answer">
-        <p className="results__answer--text">The Answer is: {validAnswers.split(",")}</p>
+        <p className="results__answer--text">The Answer is: {validAnswers.join(",")}</p>
     </div>
 
     <div className="results__podium">

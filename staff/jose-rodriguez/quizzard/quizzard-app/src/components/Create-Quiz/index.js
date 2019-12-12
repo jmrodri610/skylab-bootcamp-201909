@@ -22,7 +22,6 @@ export default function ({onCreate }) {
             
             event.preventDefault();
             const {title: {value: title}, description: {value: description}} = event.target
-            debugger
             onCreate(title, description, questions)
         }}>
             <div className="create__header">

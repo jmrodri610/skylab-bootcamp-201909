@@ -22,7 +22,7 @@ import Context from '../Context'
 import {
   authenticateUser, registerUser,
   retrieveUser, listQuizs, createQuiz, retrieveQuiz, startQuiz,
-  enrollGame, retrieveQuestion, nextQuestion, disableQuestion
+  enrollGame, retrieveQuestion, nextQuestion, disableQuestion, retrieveResults
 } from '../../logic'
 
 
@@ -194,9 +194,16 @@ export default withRouter(function ({ history }) {
   function handleShowResults(quizId) {
 
     history.push(`/results/${quizId}`)
+
   }
 
-  async function handleGoToResults(quizId, results) {
+  async function handleGoToResults(quizId) {
+
+    await disableQuestion(quizId)
+
+    const { playerId } = sessionStorage
+    
+    const results = await retrieveResults(playerId, quizId)
 
     setResults(results)
 

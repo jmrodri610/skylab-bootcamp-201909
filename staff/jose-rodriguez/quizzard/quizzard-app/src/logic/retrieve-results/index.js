@@ -22,7 +22,7 @@ module.exports = function (playerId, quizId) {
             body: JSON.stringify({ playerId, quizId })
         })
 
-        if (res.status === 200) { debugger
+        if (res.status === 200) { 
             const results = JSON.parse(res.body)
 
             return results
