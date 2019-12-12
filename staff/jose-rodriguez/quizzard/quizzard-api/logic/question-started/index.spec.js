@@ -6,7 +6,7 @@ const { random } = Math
 const { errors: { ConflictError, NotFoundError } } = require('quizzard-util')
 const { database, ObjectId, models: { User, Quiz } } = require('quizzard-data')
 
-describe('logic - enable next question', () => {
+describe('logic - question started', () => {
     before(() => database.connect(DB_URL_TEST))
 
     let id, name, surname, email, username, password, title, questions, quizId, description, status, players, playerId
@@ -66,7 +66,7 @@ describe('logic - enable next question', () => {
                 "nickname": "jose"
             }
         ]
-
+        
         const quiz = await Quiz.create({ owner: id, title, description, status, currentQuestion: currentQuestion_, players: players_, questions })
 
         quizId = quiz.id
@@ -79,7 +79,7 @@ describe('logic - enable next question', () => {
         expect(quizId).to.exist
         expect(quizId).to.be.a('string')
         expect(quizId).to.have.length.greaterThan(0)
-
+        
         const quiz = await Quiz.findById(quizId)
 
         expect(quiz).to.exist
@@ -111,7 +111,7 @@ describe('logic - enable next question', () => {
     it('should succeed on correct response of question status', async () => {
 
         
-        res = await questionStarted(playerId, quizId)
+        res = await questionStarted(quizId)
 
         expect(res).to.exist
         expect(res).to.be.a('boolean')
@@ -126,7 +126,7 @@ describe('logic - enable next question', () => {
         await quiz.save()
 
         try {
-            await questionStarted(playerId, quizId)
+            await questionStarted(quizId)
 
             throw new Error('should not reach this point')
         } catch (error) {
@@ -142,7 +142,7 @@ describe('logic - enable next question', () => {
         quizId = '5de0fea2bfdcadf08120aaf6'
 
         try {
-            await questionStarted(playerId, quizId)
+            await questionStarted(quizId)
 
             throw new Error('should not reach this point')
         } catch (error) {
@@ -154,21 +154,7 @@ describe('logic - enable next question', () => {
         }
     })
 
-    it('should fail on non-existing a player into a quiz', async () => {
-        playerId = '5ddf9144735f2326c4185e45'
 
-        try {
-            await questionStarted(playerId, quizId)
-
-            throw new Error('should not reach this point')
-        } catch (error) {
-            expect(error).to.exist
-            expect(error).to.be.an.instanceOf(NotFoundError)
-
-            const { message } = error
-            expect(message).to.equal(`player not found into this quiz. Contact to quizz administrator`)
-        }
-    })
 
 
     after(() => Promise.all([User.deleteMany(), Quiz.deleteMany()]).then(database.disconnect))

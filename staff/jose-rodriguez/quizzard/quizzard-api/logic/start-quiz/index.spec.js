@@ -62,8 +62,7 @@ describe('logic - start quiz', () => {
         quizId = await startQuiz(id, quizId)
 
         expect(quizId).to.exist
-        expect(quizId).to.be.a('string')
-        expect(quizId).to.have.length.greaterThan(0)
+
 
         const quiz = await Quiz.findById(quizId)
 
