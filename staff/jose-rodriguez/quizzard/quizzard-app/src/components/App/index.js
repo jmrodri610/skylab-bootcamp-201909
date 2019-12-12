@@ -104,6 +104,8 @@ export default withRouter(function ({ history }) {
 
   function handleGoEnd() { history.push('/gameover') }
 
+  function handleCloseError() { setFeed(undefined) }
+
   function handleGoToDetail(id) {
     history.push(`/quiz/${id}`)
 
@@ -117,8 +119,8 @@ export default withRouter(function ({ history }) {
       await registerUser(name, surname, email, username, password)
 
       history.push('/login')
-    } catch (error) {
-      console.error(error)
+    } catch ({message}) {
+      setFeed({title: "Oops!", message })
     }
   }
 
@@ -129,8 +131,8 @@ export default withRouter(function ({ history }) {
       sessionStorage.token = token
 
       history.push('/profile')
-    } catch (error) {
-      console.error(error)
+    } catch ({message}) {
+      setFeed({title: "Oops!", message })
     }
   }
 
@@ -145,8 +147,9 @@ export default withRouter(function ({ history }) {
       const quizId = quiz.id
 
       history.push(`/quiz/${quizId}`)
-    } catch (error) {
-      console.error(error)
+    } catch ({message}) {
+
+      setFeed({title: "Oops!", message })
     }
 
   }
@@ -157,20 +160,25 @@ export default withRouter(function ({ history }) {
     const { currentQuestion } = quiz
     setQuiz(quiz)
     setCurrentQuestion(currentQuestion)
-    //const questionId = questions[currentQuestion]._id
+
 
     if (token) {
       history.push(`/admin/${quizId}`)
     } else {
-      const { playerId } = sessionStorage
-      const question = await retrieveQuestion(playerId, quizId)
-      const timer = question.timing_
-      setTimer(timer)
-      history.push(`/waiting/${quizId}`)
-      setTimeout(function () { return history.push(`/game/${quizId}`) }, 5000)
+      try {
+        const { playerId } = sessionStorage
+        const question = await retrieveQuestion(playerId, quizId)
+        const timer = question.timing_
+        setTimer(timer)
+        history.push(`/waiting/${quizId}`)
+        setTimeout(function () { return history.push(`/game/${quizId}`) }, 5000)
+        
+      } catch ({message}) {
+
+        setFeed({title: "Oops!", message })
+        
+      }
     }
-
-
   }
 
   async function handleNextQuestion(quizId) {
@@ -178,7 +186,6 @@ export default withRouter(function ({ history }) {
     await disableQuestion(quizId)
 
     setTimeout(async function () { await nextQuestion(quizId) }, 3000)
-    //await nextQuestion(quizId)
 
     history.push(`/lobby/${quizId}`)
 
@@ -191,16 +198,12 @@ export default withRouter(function ({ history }) {
 
   async function handleGoToResults(quizId, results) {
 
-    debugger
-
     setResults(results)
 
     history.push(`/results/${quizId}`)
 
 
     setTimeout(function () { return history.push(`/lobby/${quizId}`) }, 10000)
-
-
   }
 
   const { token } = sessionStorage
@@ -222,7 +225,7 @@ export default withRouter(function ({ history }) {
       <Route path="/admin/:id" render={props => <Admin currentQuestion={currentQuestion} quizId={props.match.params.id} nextQuestion={handleNextQuestion} />} />
       <Route path="/results/:id" render={props => <Results quizId={props.match.params.id} results={results} />} />
       <Route path="/gameover" render={() => <GameOver onBack={handleGoToLanding} />} />
-      {feed && <Feedback title={feed.title} message={feed.message} />}
+      {feed && <Feedback title={feed.title} message={feed.message} onClose={handleCloseError}/>}
     </Context.Provider>
   </>
 })
