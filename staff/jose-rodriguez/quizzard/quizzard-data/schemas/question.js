@@ -29,6 +29,11 @@ module.exports = new Schema({
         default: 'finished'
     },
 
+    resultsCalculated: {
+        type: Boolean,
+        default: false
+    },
+
     startTime: Date
 
 })
