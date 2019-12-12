@@ -4,6 +4,19 @@ Quizzard! is a web app designed to create and play quiz made by users around the
 
 ![Quizzard!](https://media.giphy.com/media/9A6HMO4IWp7EX8fa1G/giphy.gif)
 
+## Features
+User can do:
+
+- Register/Login
+- Create Quiz
+- Start a game quiz and play it as admin
+
+Player can:
+
+- Join an active quiz
+
+
+
 ## Functional Description
 
 ![Functional Description](./functional-desc.png)
@@ -12,8 +25,28 @@ Quizzard! is a web app designed to create and play quiz made by users around the
 
 ![Use Cases](./use-cases.png)
 
+
 ## Technical Description
 
-![Technical Description](./data-model.png)
+### Blocks
+
+![Blocks](./Block.png)
+
+### Data Model
+
+![DataModel](./data-model.png)
+
+## Code Coverage
+
+![Code Coverage](./code.png)
+
+
+### TODO
+- Implement Boosters
+
+
+
+
+
 
 
