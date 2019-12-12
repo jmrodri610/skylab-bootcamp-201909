@@ -78,7 +78,7 @@ describe('logic - enroll quiz', () => {
 
         expect(quiz.status).to.be.undefined
 
-        expect(quiz.currentQuestion).to.be.undefined
+        expect(quiz.currentQuestion).to.equal(-1)
 
         expect(quiz.players).to.exist
         expect(quiz.players).to.be.instanceOf(Array)
@@ -97,11 +97,12 @@ describe('logic - enroll quiz', () => {
 
         await quiz.save()
 
-        playerId = await enrollQuiz(quizId, nickname)
+        result = await enrollQuiz(quizId, nickname)
 
-        expect(playerId).to.exist
-        expect(playerId).to.be.a('string')
-        expect(playerId).to.have.length.greaterThan(0)
+        expect(result).to.exist
+        expect(result).to.be.an.instanceOf(Object)
+        expect(result.player.toString()).to.be.a('string')
+
 
         expect(quiz.status).to.exist
         expect(quiz.status).to.equal('started')

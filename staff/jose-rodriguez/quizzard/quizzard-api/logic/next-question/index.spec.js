@@ -100,7 +100,7 @@ describe('logic - enable next question', () => {
 
         let quiz = await Quiz.findById(quizId)
         debugger
-        quiz = await nextQuestion(id, quizId)
+        quiz = await nextQuestion(quizId)
         
         expect(quiz.currentQuestion).to.exist
         expect(quiz.currentQuestion).to.be.a('number')
@@ -109,29 +109,12 @@ describe('logic - enable next question', () => {
 
     })
 
-    it('should fail on incorrect owner and quiz data', async () => {
-        id = '5de0fea2bfdcadf08120aaf6'
-
-        try {
-            await nextQuestion(id, quizId)
-
-            throw new Error('should not reach this point')
-        } catch (error) {
-            expect(error).to.exist
-            expect(error).to.be.an.instanceOf(ConflictError)
-
-            const { message } = error
-            expect(message).to.equal(`only the owner of this quiz can do this action`)
-        }
-    })
-
     
-
     it('should fail on non-existing quiz request', async () => {
         quizId = '5de0fea2bfdcadf08120aaf6'
 
         try {
-            await nextQuestion(id, quizId)
+            await nextQuestion(quizId)
 
             throw new Error('should not reach this point')
         } catch (error) {
@@ -143,27 +126,12 @@ describe('logic - enable next question', () => {
         }
     })
 
-    it('should fail on incorrect user id format', async () => {
-        id = 'userId'
-
-        try {
-            await nextQuestion(id, quizId)
-
-            throw new Error('should not reach this point')
-        } catch (error) {
-            expect(error).to.exist
-            expect(error).to.be.an.instanceOf(ContentError)
-
-            const { message } = error
-            expect(message).to.equal('userId is not a valid id')
-        }
-    })
 
     it('should fail on incorrect quiz id format', async () => {
         quizId = 'quizId'
 
         try {
-            await nextQuestion(id, quizId)
+            await nextQuestion(quizId)
 
             throw new Error('should not reach this point')
         } catch (error) {

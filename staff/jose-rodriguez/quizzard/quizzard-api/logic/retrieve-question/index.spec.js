@@ -79,7 +79,7 @@ describe('logic - retrieve current question', () => {
 
         expect(quiz.status).to.be.undefined
 
-        expect(quiz.currentQuestion).to.be.undefined
+        expect(quiz.currentQuestion).to.equal(-1)
 
         expect(quiz.players).to.exist
         expect(quiz.players).to.be.instanceOf(Array)

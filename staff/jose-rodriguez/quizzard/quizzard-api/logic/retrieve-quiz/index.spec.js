@@ -78,7 +78,7 @@ describe('logic - retrieve quiz', () => {
 
         expect(quiz.status).to.be.undefined
 
-        expect(quiz.currentQuestion).to.be.undefined
+        expect(quiz.currentQuestion).to.equal(-1)
 
         expect(quiz.players).to.exist
         expect(quiz.players).to.be.instanceOf(Array)
@@ -135,7 +135,7 @@ describe('logic - retrieve quiz', () => {
         playerId = player.id
         
 
-        quiz = await retrieveQuiz(playerId, quizId)
+        quiz = await retrieveQuiz(quizId)
 
         expect(quiz.title).to.exist
         expect(quiz.title).to.be.a('string')
@@ -151,34 +151,7 @@ describe('logic - retrieve quiz', () => {
 
     })
 
-    it('should fail on incorrect player and quiz data', async () => {
-        
-        nickname = `nickname-${random()}`
-        nickname2 = `nickname-${random()}`
-        const quiz = await Quiz.findById(quizId)
-        const { players } = quiz
-        const player = new Player({nickname})
-        players.push(player)
-        playerId = player.id
-        quiz.status = 'started'
-        await quiz.save()
-
-        const player2 = new Player({nickname2})
-        playerId = player2.id
-
-        try {
-            await retrieveQuiz(playerId, quizId)
-
-            throw Error('should not reach this point')
-        } catch (error) {
-            expect(error).to.exist
-
-            expect(error.message).to.exist
-            expect(typeof error.message).to.equal('string')
-            expect(error.message.length).to.be.greaterThan(0)
-            expect(error.message).to.equal('player not found into this quiz. Contact to quizz administrator')
-        }
-    })
+    
 
 after(() => Promise.all([User.deleteMany(), Quiz.deleteMany()]).then(database.disconnect))
 })
