@@ -2,7 +2,7 @@ import React from 'react'
 import './index.sass'
 import ListQuiz from '../List-Quiz'
 
-export default function ({ user, email, userId, quizs, onCreate, onDetail }) {
+export default function ({ user, email, userId, quizs, onCreate, onDetail, onLogout }) {
     let quizzards
     let players = 0
     let acc_players = 0 
@@ -28,6 +28,10 @@ export default function ({ user, email, userId, quizs, onCreate, onDetail }) {
     return <section className="profile">
         <div className="profile__header">
             <div className="profile__logo">Quizzard!</div>
+            <div className="profile__logout" onClick={event => {
+                event.preventDefault();
+                onLogout()
+            }}>Logout</div>
             <div className="profile__addquiz" onClick={event => {
                 event.preventDefault(); onCreate()
             }}>+</div>

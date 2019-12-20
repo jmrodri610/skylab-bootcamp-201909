@@ -1,8 +1,9 @@
-const call = require('../../utils/call')
+import call from '../../utils/call'
 const { validate, errors: { NotFoundError, CredentialsError } } = require('quizzard-util')
 const API_URL = process.env.REACT_APP_API_URL
 
-module.exports = function (playerId, quizId) {
+//module.exports = function (playerId, quizId) {
+export default function (playerId, quizId) {
 
     validate.string(playerId)
     validate.string.notVoid('playerId', playerId)

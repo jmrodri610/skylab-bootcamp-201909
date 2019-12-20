@@ -112,6 +112,11 @@ export default withRouter(function ({ history }) {
     setQuizId(id)
   }
 
+  function handleLogout () {
+    sessionStorage.clear()
+    history.push('/')
+  }
+
 
 
   async function handleRegister(name, surname, email, username, password) {
@@ -131,10 +136,13 @@ export default withRouter(function ({ history }) {
       sessionStorage.token = token
 
       history.push('/profile')
+
     } catch ({message}) {
       setFeed({title: "Oops!", message })
     }
   }
+
+
 
   async function handleCreate(title, description, questions) {
 
@@ -222,9 +230,9 @@ export default withRouter(function ({ history }) {
       <Route path="/home" render={() => <Home onLanding={handleGoToLanding} onRegister={handleGoToRegister} onLogin={handleGoToLogin} />} />
       <Route path="/register" render={() => token ? <Redirect to="/profile" /> : <Register onRegister={handleRegister} onBack={handleGoBack} onLogin={handleGoToLogin} />} />
       <Route path="/login" render={() => token ? <Redirect to="/profile" /> : <Login onLogin={handleLogin} onBack={handleGoBack} onRegister={handleGoToRegister} />} />
-      <Route path="/profile" render={() => token ? <Profile user={username} email={email} userId={id} quizs={quizs} onCreate={handleGoToCreate} onDetail={handleGoToDetail} /> : <Redirect to="/" />} />
+      <Route path="/profile" render={() => token ? <Profile user={username} email={email} userId={id} quizs={quizs} onCreate={handleGoToCreate} onDetail={handleGoToDetail} onLogout={handleLogout} /> : <Redirect to="/" />} />
       <Route path="/create" render={() => true ? <CreateQuiz onCreate={handleCreate} /> : <Redirect to="/" />} />
-      <Route path="/quiz" render={() => token ? <Detail onStart={handleStartGame} /> : <Redirect to="/" />} />
+      <Route path="/quiz" render={() => token ? <Detail onStart={handleStartGame} quizId={id}/> : <Redirect to="/" />} />
       <Route path="/lobby/:id" render={props => <Lobby quiz={quiz} quizId={props.match.params.id} handleGoToQuestion={handleGoToQuestion} goEnd={handleGoEnd} />} />
       <Route path="/instructions" render={() => <PlayerLobby quiz={quiz} />} />
       <Route path="/waiting/:id" render={props => <WaitingArea quiz={quiz} quizId={props.match.params.id} />} />
