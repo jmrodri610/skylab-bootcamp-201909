@@ -1,58 +1,67 @@
-@import url('https://fonts.googleapis.com/css?family=Lobster|Nanum+Gothic&display=swap')
+@import url('https://fonts.googleapis.com/css?family=Montserrat+Alternates|Sriracha&display=swap')
     
 body
-    animation: colorchange 20s infinite
-    font-family: 'Nanum Gothic', sans-serif
+    margin: 0
+    font-family: 'Montserrat Alternates', sans serif
 
-.landing
-    display: flex
-    flex-direction: column
-    min-height: 100vh
-    justify-content: space-around
-    align-items: center
+
+.login
+    &__container
+        height: 100vh
+        width: 100vw
+        background: #673AB7
+        display: flex
+        align-items: center
+        justify-content: center
+    &__header
+        display: flex
+        justify-content: space-around
+        align-items: center
+        height: 10vh
+        width: 100vw
+        background: white
+        color: #673AB7
+        position: fixed
+        top: 0
+        z-index: 1000
+        font-size: 125%
+    &__main
+        height: 30%
+        background-color: rgba(255, 255, 255, 0.79)
+        border-radius: 0.3rem
+        width: 60%
+        display: flex
+        flex-direction: column
+        align-items: center
+    &__title
+        height: 20%
+        font-family: 'Sriracha', cursive
+        color: #673AB7
     &__form
         display: flex
         flex-direction: column
-        justify-content: center
-        align-items: center
-        height: 70vh
-    &__title
-        color: whitesmoke
-        font-size: 3rem
-        font-family: 'Lobster', cursive
-    &__pincode
-        font-size: 1.5rem
-        border-radius: .5rem
-        border: solid black 0.2rem
-        text-align: center
-        margin-bottom: 0.7rem
-    &__start
-        background-color: whitesmoke
-        border-radius: 0.5rem
-        border: solid black 0.1rem
-        text-align: center
-        color: black
-        box-shadow: 4px 0px 39px 5px rgba(0,0,0,0.29)
-        font-size: 1.5rem
-    &__redirect
-        text-align: center
-        color: whitesmoke
-    &__home
-        font-family: 'Lobster', cursive
-        color: whitesmoke
-        &:link, :visited, :active
-            text-decoration: none
+        height: 30%
+        width: 80%
+    &__input
+        border: 0
+        border-radius: 0.2rem
+        box-shadow: 0 0 10px #6d6b6b
+        margin-bottom: 0.8rem
+    &__buttons
+        display: flex
+        justify-content: space-around
+
+    &__submit
+
+        border: none
+        border-radius: 0.2rem
+        box-shadow: 0 0 10px #6d6b6b
+        margin-bottom: 0.8rem
+        width: 30%
+        background-color: #673AB7
+        color: snow
+        z-index: 2000
 
 
 
-@keyframes colorchange
-    0%   
-        background: #990000
-    25%  
-        background: #d0d001
-    50%  
-        background: #2a2ac3
-    75%  
-        background: #118a11
-    100% 
-        background: #990000
+

@@ -3,7 +3,7 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const { name, version } = require('./package.json')
-const { registerUser, authenticateUser, retrieveUser, createQuiz, startQuiz, enrollQuiz, retrieveQuiz, questionStarted, nextQuestion, retrieveQuestion, submitAnswer, enableQuestion, retrieveResults, listQuizs, disableQuestion } = require('./logic')
+const { registerUser, authenticateUser, retrieveUser, createQuiz, startQuiz, enrollQuiz, retrieveQuiz, questionStarted, nextQuestion, retrieveQuestion, submitAnswer, enableQuestion, retrieveResults, listQuizs, disableQuestion, resetQuiz } = require('./logic')
 const jwt = require('jsonwebtoken')
 const { argv: [, , port], env: { SECRET, PORT = port || 8080, DB_URL } } = process
 const cors = require('./utils/cors')
@@ -329,6 +329,28 @@ api.post('/play/results', jsonBodyParser, (req, res) => {
         const { body: {playerId, quizId} } = req
         retrieveResults(playerId, quizId)
             .then(results => res.status(200).json(results))
+            .catch(error => {
+                const { message } = error
+
+                if (error instanceof NotFoundError)
+                    return res.status(404).json({ message })
+                if (error instanceof ContentError)
+                    return res.status(409).json({ message })
+                if (error instanceof ConflictError)
+                    return res.status(403).json({ message })
+
+                res.status(500).json({ message })
+            })
+    } catch ({ message }) {
+        res.status(400).json({ message })
+    }
+})
+
+api.post('/users/reset', tokenVerifier, jsonBodyParser, (req, res) => {
+    try {
+        const { body: {id, quizId} } = req
+        resetQuiz(id, quizId)
+            .then(quiz => res.status(200).json(quiz))
             .catch(error => {
                 const { message } = error
 
