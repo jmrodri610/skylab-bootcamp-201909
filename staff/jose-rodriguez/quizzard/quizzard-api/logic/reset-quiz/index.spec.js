@@ -7,7 +7,7 @@ const { errors: { ContentError } } = require('quizzard-util')
 const { ObjectId, database, models: { User, Quiz } } = require('quizzard-data')
 
 
-describe.only('logic - reset quiz', () => {
+describe('logic - reset quiz', () => {
     before(() => database.connect(DB_URL_TEST))
 
     let id, name, surname, email, username, password, title, questions, quizId, description, status, playerId, answers
