@@ -21,7 +21,7 @@
     &__logo
         color: white
         font-family: Lobster, cursive
-        font-size: 2rem
+        font-size: 120%
         &:link, :visited, :active
             text-decoration: none
     &__done
@@ -46,7 +46,7 @@
     flex-direction: column
     align-items: center
     width: 100vw
-    margin-top: 4rem
+    margin-top: 6rem
     overflow: scroll
     &__options
         display: flex
@@ -71,14 +71,8 @@
         align-items: center
         width: 80vw
         margin-bottom: 1.5rem
-    &__score
-        width: 20vw
-        font-size: 1rem
-        padding: 0.2rem
-        border-radius: 0.3rem
-        box-shadow: 0 0 5px black
-        text-align: center
-    &__timer
+
+    &__selector
         width: 25vh
         font-size: 1rem
         font-family: 'Montserrat Alternates', sans serif
@@ -114,25 +108,41 @@
             height: 10vh
             width: 35vw
             border-radius: 0.3rem
+            color: snow
+            display: flex
+            justify-content: center
+            text-align: center
  
         &--2
             grid-area: answer2
-            background-color: #69b66f
+            background-color: #2bd038
             height: 10vh
             width: 35vw
             border-radius: 0.3rem
+            color: snow
+            display: flex
+            justify-content: center
+            text-align: center
         &--3
             grid-area: answer3
-            background-color: #5b69ae
+            background-color: #4160f8
             height: 10vh
             width: 35vw
             border-radius: 0.3rem
+            color: snow
+            display: flex
+            justify-content: center
+            text-align: center
         &--4
             grid-area: answer4
-            background-color: #cbdb43
+            background-color: #e0f14e
             height: 10vh
             width: 35vw
             border-radius: 0.3rem
+            color: snow
+            display: flex
+            justify-content: center
+            text-align: center
 
     &__add
         grid-area: submit

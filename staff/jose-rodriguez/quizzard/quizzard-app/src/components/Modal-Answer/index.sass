@@ -1,0 +1,122 @@
+.modal-answer
+    width: 100vw
+    height: 100vh
+    position: absolute
+    top: 0
+    left: 0
+    display: flex
+    justify-content: center
+    align-items: center
+    z-index: 1000
+    background-color: #ffffffe0
+        
+    &__form--1
+        background-color: rgb(208,25,55)
+        position: relative
+        width: 70vw
+        height: 20vh
+        display: flex
+        align-items: center
+        justify-content: center
+        border-radius: 0.5rem
+    &__form--2
+        background-color: #2bd038
+        position: relative
+        width: 70vw
+        height: 20vh
+        display: flex
+        align-items: center
+        justify-content: center
+        border-radius: 0.5rem
+    &__form--3
+        background-color: #4160f8
+        position: relative
+        width: 70vw
+        height: 20vh
+        display: flex
+        align-items: center
+        justify-content: center
+        border-radius: 0.5rem
+    &__form--4
+        background-color: #e0f14e
+        position: relative
+        width: 70vw
+        height: 20vh
+        display: flex
+        align-items: center
+        justify-content: center
+        border-radius: 0.5rem
+    &__submit
+        position: absolute
+        bottom: 5%
+        right: 0
+    &__title--1
+        background-color: rgb(208,25,55)
+        font-size: 130%
+        width: 80%
+        height: 2rem
+        color: snow
+        border: none
+        &::placeholder
+            color: snow
+    &__title--2
+        background-color: #2bd038
+        font-size: 130%
+        width: 80%
+        height: 2rem
+        color: snow
+        border: none
+        &::placeholder
+            color: snow
+    &__title--3
+        background-color: #4160f8
+        font-size: 130%
+        width: 80%
+        height: 2rem
+        color: snow
+        border: none
+        &::placeholder
+            color: snow
+    &__title--4
+        background-color: #e0f14e
+        font-size: 130%
+        width: 80%
+        height: 2rem
+        color: snow
+        border: none
+        &::placeholder
+            color: snow
+    &__close
+        position: absolute
+        top: 5%
+        right: 5%
+        font-size: 125%
+    &__container
+        display: flex
+        align-items: center
+        justify-content: space-between
+        width: 90%
+        input[type="checkbox"]
+            display: none
+        input[type="checkbox"] + label span
+            display: flex
+            justify-content: center
+            align-items: center
+            width: 1.5rem
+            height: 1.5rem
+            border: 0.2rem solid white
+            border-radius: 100%
+            background: silver
+            color: white
+        input[type="checkbox"]:checked + label span
+            display: flex
+            justify-content: center
+            align-items: center
+            width: 1.5rem
+            height: 1.5rem
+            border: 0.2rem solid white
+            border-radius: 100%
+            background: #69b66f
+            color: white
+
+        

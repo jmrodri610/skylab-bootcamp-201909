@@ -4,8 +4,8 @@ import './index.sass'
 export default function Modal({ type, getInput, modalClose }) {
     
     return <div className="modal">
-        <div className="modal__container">
-            <form onSubmit={event => {
+
+            <form className="modal__form" onSubmit={event => {
                 event.preventDefault()
                 
 
@@ -41,7 +41,7 @@ export default function Modal({ type, getInput, modalClose }) {
                     modalClose()
                 }}>✖︎</div>
             </form>
-        </div>
+
     </div>
 
 }
