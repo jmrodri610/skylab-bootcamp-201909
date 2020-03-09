@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken')
 require('../../helpers/jest-matchers')
 
 describe('logic - retrieve user', () => {
-    beforeAll(() => database.connect(TEST_DB_URL))
+    beforeAll(async () => await database.connect(TEST_DB_URL))
 
     let id, token, name, surname, email, username, password
 

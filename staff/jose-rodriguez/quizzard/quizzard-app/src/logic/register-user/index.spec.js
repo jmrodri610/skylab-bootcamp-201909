@@ -5,7 +5,7 @@ const { errors: { ContentError } } = require('tasks-util')
 const { database, models: { User } } = require('tasks-data')
 
 describe('logic - register user', () => {
-    beforeAll(() => database.connect(TEST_DB_URL))
+    beforeAll(async () => await database.connect(TEST_DB_URL))
 
     let name, surname, email, username, password
 

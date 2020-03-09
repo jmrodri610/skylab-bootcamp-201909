@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Route, withRouter, Redirect } from 'react-router-dom'
-import { StyleSheet, Text, View } from "react-native"
-
-
 import './index.sass'
 import Landing from '../Landing'
 import Home from '../Home'
@@ -42,20 +39,31 @@ export default withRouter(function ({ history }) {
   const [feed, setFeed] = useState()
 
   useEffect(() => {
+
     const { token } = sessionStorage;
 
     (async () => {
-      if (token) {
-        const { user: { username, email, id } } = await retrieveUser(token)
+      try {
+        if (token) {
+          const { user: { username, email, id } } = await retrieveUser(token)
 
-        setUsername(username)
-        setEmail(email)
-        setId(id)
+          setUsername(username)
+          setEmail(email)
+          setId(id)
 
-        await retrieveQuizs(token)
+          await retrieveQuizs(token)
 
+        }
+      } catch (error) {
+        setFeed({ title: "Session Expired!", message: "You'll be redirect to Home" })
+        setTimeout(() => {
+          setFeed(undefined)
+          sessionStorage.clear()
+          history.push('/')
+        }, 3000)
       }
     })()
+
   }, [sessionStorage.token])
 
   async function retrieveQuizs(token) {
@@ -87,8 +95,6 @@ export default withRouter(function ({ history }) {
 
     sessionStorage.playerId = playerId
 
-    // history.push('/instructions')
-
     history.push(`/lobby/${quizId}`)
   }
 
@@ -108,13 +114,9 @@ export default withRouter(function ({ history }) {
 
   function handleCloseError() { setFeed(undefined) }
 
-  function handleGoToDetail(id) {
-    history.push(`/quiz/${id}`)
+  function handleGoToDetail(id) { history.push(`/quiz/${id}`) }
 
-    setQuizId(id)
-  }
-
-  function handleLogout () {
+  function handleLogout() {
     sessionStorage.clear()
     history.push('/')
   }
@@ -126,8 +128,8 @@ export default withRouter(function ({ history }) {
       await registerUser(name, surname, email, username, password)
 
       history.push('/login')
-    } catch ({message}) {
-      setFeed({title: "Oops!", message })
+    } catch ({ message }) {
+      setFeed({ title: "Oops!", message })
     }
   }
 
@@ -139,12 +141,10 @@ export default withRouter(function ({ history }) {
 
       history.push('/profile')
 
-    } catch ({message}) {
-      setFeed({title: "Oops!", message })
+    } catch ({ message }) {
+      setFeed({ title: "Oops!", message })
     }
   }
-
-
 
   async function handleCreate(title, description, questions) {
 
@@ -157,9 +157,9 @@ export default withRouter(function ({ history }) {
       const quizId = quiz.id
 
       history.push(`/quiz/${quizId}`)
-    } catch ({message}) {
+    } catch ({ message }) {
 
-      setFeed({title: "Oops!", message })
+      setFeed({ title: "Oops!", message })
     }
 
   }
@@ -182,11 +182,11 @@ export default withRouter(function ({ history }) {
         setTimer(timer)
         history.push(`/waiting/${quizId}`)
         setTimeout(function () { return history.push(`/game/${quizId}`) }, 5000)
-        
-      } catch ({message}) {
 
-        setFeed({title: "Oops!", message })
-        
+      } catch ({ message }) {
+
+        setFeed({ title: "Oops!", message })
+
       }
     }
   }
@@ -212,7 +212,7 @@ export default withRouter(function ({ history }) {
     await disableQuestion(quizId)
 
     const { playerId } = sessionStorage
-    
+
     const results = await retrieveResults(playerId, quizId)
 
     setResults(results)
@@ -234,7 +234,7 @@ export default withRouter(function ({ history }) {
       <Route path="/login" render={() => token ? <Redirect to="/profile" /> : <Login onLogin={handleLogin} onBack={handleGoBack} onRegister={handleGoToRegister} />} />
       <Route path="/profile" render={() => token ? <Profile user={username} email={email} userId={id} quizs={quizs} onCreate={handleGoToCreate} onDetail={handleGoToDetail} onLogout={handleLogout} /> : <Redirect to="/" />} />
       <Route path="/create" render={() => true ? <CreateQuiz onCreate={handleCreate} /> : <Redirect to="/" />} />
-      <Route path="/quiz" render={() => token ? <Detail onStart={handleStartGame} quizId={id}/> : <Redirect to="/" />} />
+      <Route path="/quiz/:id" render={props => token ? <Detail quiz={quiz} onStart={handleStartGame} quizId={props.match.params.id} /> : <Redirect to="/" />} />
       <Route path="/lobby/:id" render={props => <Lobby quiz={quiz} quizId={props.match.params.id} handleGoToQuestion={handleGoToQuestion} goEnd={handleGoEnd} />} />
       <Route path="/instructions" render={() => <PlayerLobby quiz={quiz} />} />
       <Route path="/waiting/:id" render={props => <WaitingArea quiz={quiz} quizId={props.match.params.id} />} />
@@ -242,7 +242,7 @@ export default withRouter(function ({ history }) {
       <Route path="/admin/:id" render={props => <Admin currentQuestion={currentQuestion} quizId={props.match.params.id} nextQuestion={handleNextQuestion} />} />
       <Route path="/results/:id" render={props => <Results quizId={props.match.params.id} results={results} />} />
       <Route path="/gameover" render={() => <GameOver onBack={handleGoToLanding} />} />
-      {feed && <Feedback title={feed.title} message={feed.message} onClose={handleCloseError}/>}
+      {feed && <Feedback title={feed.title} message={feed.message} onClose={handleCloseError} />}
     </Context.Provider>
   </>
 })

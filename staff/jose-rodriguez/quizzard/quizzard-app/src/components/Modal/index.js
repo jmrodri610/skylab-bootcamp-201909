@@ -33,7 +33,7 @@ export default function Modal({ type, getInput, modalClose }) {
                 }
 
             }}>
-                <input className="modal__title" type="text" placeholder="Enter Quiz title" name={type} autoFocus required></input>
+                <input className="modal__title" type="text" placeholder="Enter text here..." name={type} autoFocus required></input>
                 <input type="submit" className="modal__submit" value="Submit"></input>
                 <div className="modal__close" onClick={event => {
                     event.preventDefault()

@@ -50,7 +50,7 @@ api.post('/auth', jsonBodyParser, (req, res) => {
     try {
         authenticateUser(username, password)
             .then(id => {
-                const token = jwt.sign({ sub: id }, SECRET, { expiresIn: '3h' })
+                const token = jwt.sign({ sub: id }, SECRET, { expiresIn: '1d' })
 
                 res.json({ token })
             })

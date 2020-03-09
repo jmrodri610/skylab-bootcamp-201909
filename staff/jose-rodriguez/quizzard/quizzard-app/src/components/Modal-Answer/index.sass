@@ -9,88 +9,63 @@
     align-items: center
     z-index: 1000
     background-color: #ffffffe0
+
+    &__form
+
+        width: 70vw
+        height: 20vh
+        display: flex
+        align-items: center
+        justify-content: center
+        border-radius: 0.5rem
+        input:focus
+            outline: none
         
     &__form--1
         background-color: rgb(208,25,55)
-        position: relative
-        width: 70vw
-        height: 20vh
-        display: flex
-        align-items: center
-        justify-content: center
-        border-radius: 0.5rem
+
     &__form--2
         background-color: #2bd038
-        position: relative
-        width: 70vw
-        height: 20vh
-        display: flex
-        align-items: center
-        justify-content: center
-        border-radius: 0.5rem
+        
     &__form--3
         background-color: #4160f8
-        position: relative
-        width: 70vw
-        height: 20vh
-        display: flex
-        align-items: center
-        justify-content: center
-        border-radius: 0.5rem
+        
     &__form--4
-        background-color: #e0f14e
-        position: relative
-        width: 70vw
-        height: 20vh
-        display: flex
-        align-items: center
-        justify-content: center
-        border-radius: 0.5rem
-    &__submit
-        position: absolute
-        bottom: 5%
-        right: 0
+        background-color: #f1ce4e
+        
+    &__title
+        font-size: 130%
+        width: 80%
+        height: 2rem
+        color: snow
+        border: none
+        &::placeholder
+            color: snow
     &__title--1
         background-color: rgb(208,25,55)
-        font-size: 130%
-        width: 80%
-        height: 2rem
-        color: snow
-        border: none
-        &::placeholder
-            color: snow
+
     &__title--2
         background-color: #2bd038
-        font-size: 130%
-        width: 80%
-        height: 2rem
-        color: snow
-        border: none
-        &::placeholder
-            color: snow
+        
     &__title--3
         background-color: #4160f8
-        font-size: 130%
-        width: 80%
-        height: 2rem
-        color: snow
-        border: none
-        &::placeholder
-            color: snow
+        
     &__title--4
-        background-color: #e0f14e
-        font-size: 130%
-        width: 80%
-        height: 2rem
-        color: snow
+        background-color: #f1ce4e
+        
+    &__submit
+        appearance: none
+        position: absolute
+        bottom: 5%
+        left: 5%
+        background: none
         border: none
-        &::placeholder
-            color: snow
+
     &__close
         position: absolute
         top: 5%
-        right: 5%
-        font-size: 125%
+        left: 5%
+        font-size: 100%
     &__container
         display: flex
         align-items: center
@@ -102,21 +77,30 @@
             display: flex
             justify-content: center
             align-items: center
-            width: 1.5rem
-            height: 1.5rem
-            border: 0.2rem solid white
+            width: 2rem
+            height: 2rem
+            border: 0.05rem solid snow 
             border-radius: 100%
-            background: silver
+            background: none
             color: white
+            animation: check 1s infinite
         input[type="checkbox"]:checked + label span
             display: flex
             justify-content: center
             align-items: center
-            width: 1.5rem
-            height: 1.5rem
-            border: 0.2rem solid white
+            width: 2rem
+            height: 2rem
+            border: 0.2rem 
             border-radius: 100%
             background: #69b66f
             color: white
 
+
+@keyframes check
+    0%
+        margin-bottom: 0
+    50%
+        margin-bottom: 1.5rem
+    100%
+        margin-bottom: 0
         

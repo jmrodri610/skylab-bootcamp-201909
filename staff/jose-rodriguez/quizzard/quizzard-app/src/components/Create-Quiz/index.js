@@ -89,10 +89,10 @@ export default function ({ onCreate }) {
                     setModal('description')
                 }}>{description}</div>
                 {modal === 'description' && <Modal type='description' getInput={handleSetState} modalClose={modalClose} />}
-                <div className="quiz__title" onClick={event => {
+                <div className="quiz__question" onClick={event => {
                     event.preventDefault();
                     setModal('tit')
-                }}>{tit}</div>
+                }}><p>{tit}</p></div>
                 {modal === 'tit' && <Modal type='tit' getInput={handleSetState} modalClose={modalClose} />}
             </div>
         </div>
@@ -147,29 +147,29 @@ export default function ({ onCreate }) {
                 <div className="question__answers--1" onClick={event => {
                     event.preventDefault();
                     setModal('ans1')
-                }}><p>{ans1 && ans1.text}</p></div>
-                {modal === 'ans1' && <ModalAnswer answerContainer={'modal-answer__form--1'} titleClass={'modal-answer__title--1'} type='ans1' getInput={handleSetState} modalClose={modalClose} />}
+                }}><p>{ans1 ? ans1.text : 'Click to type answer 1'}</p></div>
+                {modal === 'ans1' && <ModalAnswer answerContainer={'modal-answer__form modal-answer__form--1'} titleClass={'modal-answer__title modal-answer__title--1'} type='ans1' getInput={handleSetState} modalClose={modalClose} />}
             </div>
             <div className="ans_content">
                 <div className="question__answers--2" onClick={event => {
                     event.preventDefault();
                     setModal('ans2')
-                }}>{ans2 && ans2.text}</div>
-                {modal === 'ans2' && <ModalAnswer answerContainer={'modal-answer__form--2'} titleClass={'modal-answer__title--2'} type='ans2' getInput={handleSetState} modalClose={modalClose} />}
+                }}><p>{ans2 ? ans2.text : 'Click to type answer 2'}</p></div>
+                {modal === 'ans2' && <ModalAnswer answerContainer={'modal-answer__form modal-answer__form--2'} titleClass={'modal-answer__title modal-answer__title--2'} type='ans2' getInput={handleSetState} modalClose={modalClose} />}
             </div>
             <div className="ans_content">
                 <div className="question__answers--3" onClick={event => {
                     event.preventDefault();
                     setModal('ans3')
-                }}>{ans3 && ans3.text}</div>
-                {modal === 'ans3' && <ModalAnswer answerContainer={'modal-answer__form--3'} titleClass={'modal-answer__title--3'} type='ans3' getInput={handleSetState} modalClose={modalClose} />}
+                }}><p>{ans3 ? ans3.text : 'Click to type answer 3'}</p></div>
+                {modal === 'ans3' && <ModalAnswer answerContainer={'modal-answer__form modal-answer__form--3'} titleClass={'modal-answer__title modal-answer__title--3'} type='ans3' getInput={handleSetState} modalClose={modalClose} />}
             </div>
             <div className="ans_content">
                 <div className="question__answers--4" onClick={event => {
                     event.preventDefault();
                     setModal('ans4')
-                }}>{ans4 && ans4.text}</div>
-                {modal === 'ans4' && <ModalAnswer answerContainer={'modal-answer__form--4'} titleClass={'modal-answer__title--4'} type='ans4' getInput={handleSetState} modalClose={modalClose} />}
+                }}><p>{ans4 ? ans4.text : 'Click to type answer 4'}</p></div>
+                {modal === 'ans4' && <ModalAnswer answerContainer={'modal-answer__form modal-answer__form--4'} titleClass={'modal-answer__title modal-answer__title--4'} type='ans4' getInput={handleSetState} modalClose={modalClose} />}
             </div>
         </div>
 

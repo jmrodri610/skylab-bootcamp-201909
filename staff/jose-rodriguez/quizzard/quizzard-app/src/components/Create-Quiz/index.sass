@@ -2,6 +2,7 @@
     display: flex
     flex-direction: column
     align-items: center
+    justify-content: space-around
     width: 100vw
     height: 100vh
     font-family: 'Montserrat Alternates', sans serif
@@ -46,30 +47,38 @@
     flex-direction: column
     align-items: center
     width: 100vw
-    margin-top: 6rem
     overflow: scroll
     &__options
         display: flex
         flex-direction: column
+        justify-content: space-around
         padding-top: 1rem
         width: 85vw
-        margin-bottom: 1.5rem
+        height: 30vh
     &__title
         font-size: 1.4rem
         width: 80vw
         height: 5vh
         border: solid black 0.1rem
-        margin-bottom: 1.5rem
-        border-radius: 0.3rem
+        border-radius: 0.05rem
         box-shadow: 0 0 5px black
         text-align: center
+    &__question
+        font-size: 125%
+        width: 80vw
+        height: 10vh
+        border: solid black 0.1rem
+        border-radius: 0.05rem
+        box-shadow: 0 0 5px black
+        display: flex
+        justify-content: center
 
 .question
     &__options
         display: flex
         justify-content: space-around
         align-items: center
-        width: 80vw
+        width: 100vw
         margin-bottom: 1.5rem
 
     &__selector
@@ -97,9 +106,9 @@
     &__answers
         display: grid
         grid-template-columns: 50% 50%
-        grid-template-rows: 45% 45% 10%
-        grid-template-areas: "answer1 answer2" "answer3 answer4" "submit submit"
-        height: 35vh
+        grid-template-rows: 45% 45%
+        grid-template-areas: "answer1 answer2" "answer3 answer4"
+        height: 25vh
         width: 75vw
        
         &--1
@@ -135,7 +144,7 @@
             text-align: center
         &--4
             grid-area: answer4
-            background-color: #e0f14e
+            background-color: #f1ce4e
             height: 10vh
             width: 35vw
             border-radius: 0.3rem
@@ -145,7 +154,6 @@
             text-align: center
 
     &__add
-        grid-area: submit
         height: 5vh
         color: white
         background-color: #673AB7

@@ -5,7 +5,7 @@ const { errors: { ContentError, CredentialsError } } = require('tasks-util')
 const { database, models: { User } } = require('tasks-data')
 
 describe('logic - authenticate user', () => {
-    beforeAll(() => database.connect(TEST_DB_URL))
+    beforeAll(async () => await database.connect(TEST_DB_URL))
 
     let id, name, surname, email, username, password
 

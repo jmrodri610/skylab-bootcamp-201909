@@ -9,11 +9,8 @@ export default function ({ onBack, onLogin, onRegister }) {
                 event.preventDefault(); onRegister()
             }}>Sign Up</div>
         </div>
-        <div className="login__back" onClick={event => {
-            event.preventDefault(); onBack()
-        }}><span>🔙</span></div>
-        <h1 className="login__title"></h1>
         <div className="login__main">
+            <h1 className="login__title">Login</h1>
             <form className="login__form" onSubmit={function (event) {
                 event.preventDefault()
 
@@ -23,7 +20,12 @@ export default function ({ onBack, onLogin, onRegister }) {
             }}>
                 <input type="text" className="login__input" name="username" placeholder="username"></input>
                 <input type="password" className="login__input" name="password" placeholder="password"></input>
-                <button className="login__submit" type="submit">Enjoy!</button>
+                <div className="login__options">
+                    <button className="login__submit" type="submit">Enjoy!</button>
+                    <div className="login__back" onClick={event => {
+                        event.preventDefault(); onBack()
+                    }}><img src="../../../back.png" className="login__back"></img></div>
+                </div>
             </form>
         </div>
     </section>

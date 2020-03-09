@@ -55,11 +55,11 @@ export default function ModalAnswer({ answerContainer, titleClass, type, getInpu
 
         }}>
             <div className='modal-answer__container'>
-                <input className={titleClass} type="text" placeholder="Enter Quiz title" name={type} autoFocus required></input>
+                <input className={titleClass} type="text" placeholder="Type answer here..." name={type} autoFocus required></input>
                 <input type="checkbox" name="check" id="checkbox 1"></input>
                 <label for="checkbox 1"><span>√</span></label>
                 <input type="submit" className="modal-answer__submit" value="Submit"></input>
-                <div className="modal__close" onClick={event => {
+                <div className="modal-answer__close" onClick={event => {
                     event.preventDefault()
 
                     modalClose()
