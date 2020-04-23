@@ -1,12 +1,12 @@
 const { validate, errors: { NotFoundError, ContentError, ConflictError } } = require('quizzard-util')
 const { ObjectId, models: { Quiz } } = require('quizzard-data')
 
-module.exports = function (playerId, quizId) {
+module.exports = function (quizId) {
 
 
-    validate.string(playerId)
-    validate.string.notVoid('playerId', playerId)
-    if (!ObjectId.isValid(playerId)) throw new ContentError(`${playerId} is not a valid id`)
+    // validate.string(playerId)
+    // validate.string.notVoid('playerId', playerId)
+    // if (!ObjectId.isValid(playerId)) throw new ContentError(`${playerId} is not a valid id`)
 
     validate.string(quizId)
     validate.string.notVoid('quizId', quizId)

@@ -39,11 +39,11 @@ export default function ({ quizId, goToResults }) {
 
                     setCounter(counter)
 
-                    if (counter < 0) {
+                    if (counter == 0) {
 
                         clearInterval(interval)
 
-                        await submitAnswers(playerId, quizId, answers)
+                        //await submitAnswers(playerId, quizId, answers)
 
                         
                         goToResults(quizId)
@@ -60,35 +60,41 @@ export default function ({ quizId, goToResults }) {
         }, 1000)
         return () => clearInterval(interval)
 
-    }, [setQuestion, counter])
+    }, [setQuestion, counter]);
 
-    function selectAnswer1() {
+    const { playerId } = sessionStorage
+
+    async function selectAnswer1() {
         const id = question.answer[0].id
         answers.push(id)
         setAnswers(answers)
         setAnswered([true, answereds[1], answereds[2], answereds[3]])
+        await submitAnswers(playerId, quizId, answers)
 
     }
 
-    function selectAnswer2() {
+    async function selectAnswer2() {
         const id = question.answer[1].id
         answers.push(id)
         setAnswers(answers)
         setAnswered([answereds[0], true, answereds[2], answereds[3]])
+        await submitAnswers(playerId, quizId, answers)
     }
 
-    function selectAnswer3() {
+    async function selectAnswer3() {
         const id = question.answer[2].id
         answers.push(id)
         setAnswers(answers)
         setAnswered([answereds[0], answereds[1], true, answereds[3]])
+        await submitAnswers(playerId, quizId, answers)
     }
 
-    function selectAnswer4() {
+    async function selectAnswer4() {
         const id = question.answer[3].id
         answers.push(id)
         setAnswers(answers)
         setAnswered([answereds[0], answereds[1], answereds[2], true])
+        await submitAnswers(playerId, quizId, answers)
     }
 
 

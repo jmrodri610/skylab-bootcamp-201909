@@ -14,6 +14,7 @@ import nextQuestion from './next-question'
 import disableQuestion from './disable-question'
 import submitAnswers from './submit-answer'
 import retrieveResults from './retrieve-results'
+import resetQuiz from './reset-quiz'
 
 export {
     authenticateUser,
@@ -30,7 +31,8 @@ export {
     nextQuestion,
     disableQuestion,
     submitAnswers,
-    retrieveResults
+    retrieveResults,
+    resetQuiz
 }
 
 

@@ -58,7 +58,7 @@ export default function ({ onStart, quizId, onLogout, onCreate, onReset }) {
         <div className="detail__list">
             <div className="detail__listinfo">
                 <p className="detail__resetQuiz" onClick={event => {
-                    event.preventDefault(); onReset()
+                    event.preventDefault(); onReset(quizId)
                 }}>Reset Quiz</p>
                 <p className="detail__startQuiz" onClick={event => {
                     event.preventDefault(); onStart()

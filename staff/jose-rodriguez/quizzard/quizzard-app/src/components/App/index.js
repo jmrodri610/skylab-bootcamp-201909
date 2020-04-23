@@ -21,8 +21,9 @@ import Context from '../Context'
 import {
   authenticateUser, registerUser,
   retrieveUser, listQuizs, createQuiz, retrieveQuiz, startQuiz,
-  enrollGame, retrieveQuestion, nextQuestion, disableQuestion, retrieveResults
+  enrollGame, retrieveQuestion, nextQuestion, disableQuestion, retrieveResults, resetQuiz
 } from '../../logic'
+
 
 
 export default withRouter(function ({ history }) {
@@ -33,7 +34,7 @@ export default withRouter(function ({ history }) {
   const [quizs, setQuizs] = useState()
   const [quiz, setQuiz] = useState()
   const [results, setResults] = useState()
-  const [quizId, setQuizId] = useState()
+  const [players, setPlayers] = useState()
   const [timer, setTimer] = useState()
   const [currentQuestion, setCurrentQuestion] = useState()
   const [feed, setFeed] = useState()
@@ -195,32 +196,51 @@ export default withRouter(function ({ history }) {
 
     await disableQuestion(quizId)
 
+    const results = await retrieveResults(quizId)
+
+    setResults(results)
+
     setTimeout(async function () { await nextQuestion(quizId) }, 3000)
 
     history.push(`/lobby/${quizId}`)
 
   }
 
-  function handleShowResults(quizId) {
-
-    history.push(`/results/${quizId}`)
-
-  }
 
   async function handleGoToResults(quizId) {
 
     await disableQuestion(quizId)
 
-    const { playerId } = sessionStorage
+    setTimeout(async function() {
+      
+      const quiz = await retrieveQuiz(quizId)
+      const { players } = quiz
+      setPlayers(players)
+    
+    }, 3000)
 
-    const results = await retrieveResults(playerId, quizId)
+    debugger
 
-    setResults(results)
-
-    history.push(`/results/${quizId}`)
-
-
+    setTimeout(function () { return history.push(`/results/${quizId}`) }, 3000)
     setTimeout(function () { return history.push(`/lobby/${quizId}`) }, 10000)
+  }
+
+  async function handleResetGame(quizId){
+
+      try {
+
+        const { token } = sessionStorage
+    
+        await resetQuiz(token, quizId)
+
+        history.push(`/quiz/${quizId}`)
+        
+      } catch ({message}) {
+        
+        setFeed({ title: "Oops!", message })
+        
+      }
+
   }
 
   const { token } = sessionStorage
@@ -234,13 +254,13 @@ export default withRouter(function ({ history }) {
       <Route path="/login" render={() => token ? <Redirect to="/profile" /> : <Login onLogin={handleLogin} onBack={handleGoBack} onRegister={handleGoToRegister} />} />
       <Route path="/profile" render={() => token ? <Profile user={username} email={email} userId={id} quizs={quizs} onCreate={handleGoToCreate} onDetail={handleGoToDetail} onLogout={handleLogout} /> : <Redirect to="/" />} />
       <Route path="/create" render={() => true ? <CreateQuiz onCreate={handleCreate} /> : <Redirect to="/" />} />
-      <Route path="/quiz/:id" render={props => token ? <Detail quiz={quiz} onStart={handleStartGame} quizId={props.match.params.id} /> : <Redirect to="/" />} />
+      <Route path="/quiz/:id" render={props => token ? <Detail quiz={quiz} onStart={handleStartGame} quizId={props.match.params.id} onReset={handleResetGame}/> : <Redirect to="/" />} />
       <Route path="/lobby/:id" render={props => <Lobby quiz={quiz} quizId={props.match.params.id} handleGoToQuestion={handleGoToQuestion} goEnd={handleGoEnd} />} />
       <Route path="/instructions" render={() => <PlayerLobby quiz={quiz} />} />
       <Route path="/waiting/:id" render={props => <WaitingArea quiz={quiz} quizId={props.match.params.id} />} />
-      <Route path="/game/:id" render={props => <Question quizId={props.match.params.id} timer={timer} goToResults={handleGoToResults} showResults={handleShowResults} />} />
+      <Route path="/game/:id" render={props => <Question quizId={props.match.params.id} timer={timer} goToResults={handleGoToResults} />} />
       <Route path="/admin/:id" render={props => <Admin currentQuestion={currentQuestion} quizId={props.match.params.id} nextQuestion={handleNextQuestion} />} />
-      <Route path="/results/:id" render={props => <Results quizId={props.match.params.id} results={results} />} />
+      <Route path="/results/:id" render={props => <Results quizId={props.match.params.id} players={players} />} />
       <Route path="/gameover" render={() => <GameOver onBack={handleGoToLanding} />} />
       {feed && <Feedback title={feed.title} message={feed.message} onClose={handleCloseError} />}
     </Context.Provider>

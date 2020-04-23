@@ -326,8 +326,8 @@ api.post('/play/submit-answer', jsonBodyParser, (req, res) => {
 
 api.post('/play/results', jsonBodyParser, (req, res) => {
     try {
-        const { body: {playerId, quizId} } = req
-        retrieveResults(playerId, quizId)
+        const { body: {quizId} } = req
+        retrieveResults(quizId)
             .then(results => res.status(200).json(results))
             .catch(error => {
                 const { message } = error
@@ -348,7 +348,7 @@ api.post('/play/results', jsonBodyParser, (req, res) => {
 
 api.post('/users/reset', tokenVerifier, jsonBodyParser, (req, res) => {
     try {
-        const { body: {id, quizId} } = req
+        const { id, body: { quizId } } = req
         resetQuiz(id, quizId)
             .then(quiz => res.status(200).json(quiz))
             .catch(error => {

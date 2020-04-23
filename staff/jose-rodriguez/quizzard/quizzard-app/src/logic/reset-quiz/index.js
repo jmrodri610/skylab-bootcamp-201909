@@ -3,30 +3,29 @@ const { validate, errors: { NotFoundError, CredentialsError } } = require('quizz
 const API_URL = process.env.REACT_APP_API_URL
 
 //module.exports = function (playerId, quizId) {
-export default function (quizId) {
+export default function (token, quizId) {
 
-    // validate.string(playerId)
-    // validate.string.notVoid('playerId', playerId)
+    validate.string(token)
+    validate.string.notVoid('token', token)
 
     validate.string(quizId)
     validate.string.notVoid('quizId', quizId)
-    
+
     return (async () => {
         
-        const res = await call(`${API_URL}/play/results`, {
-            
+        const res = await call(`${API_URL}/users/reset`, {
             method: 'POST',
             headers: {
-                // Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ quizId })
         })
 
-        if (res.status === 200) { 
-            const results = JSON.parse(res.body)
+        if (res.status === 200) {
+            const quiz = JSON.parse(res.body)
 
-            return results
+            return quiz
         }
 
         
